@@ -1,0 +1,38 @@
+#summary description of the JsonML AST format used by the es5 parser
+#labels Phase-Design,Parser
+
+Abstract syntax trees (ASTs) are generated in [http://jsonml.org JsonML] format and are of the form:
+
+{{{
+ [ "Type",
+   { key : value properties },
+   childNode1,
+   childNode2,
+   ... ]
+}}} 
+
+By convention, the last 4 letters of "Type" represent a subtype:
+  * Expressions: *Expr
+  * Statements: *Stmt
+  * Declarations: *Decl
+  * Property definitions: *Prop
+  * Patterns: *Patt
+  * Case | DefaultCase: *Case (only within a SwitchStmt)
+  * Empty marker: "Empty" (for elisions in Array-literals and omitted parts of a For-statement)
+     
+The attributes of the AST are used by some nodes:
+   
+  * For literal ASTs:
+    * `type: string // the type of literal`
+    * `value: object // the value of the parsed literal`
+  * For break, continue and labelled statements:
+    * `label: string`
+  * For unary, binary and assignment operators
+    * `op: string`
+  * For identifiers, function declarations
+    * `name: string`
+
+Language processors are allowed to add additional, optional, attributes. Some useful attributes that could be supported for most AST nodes:
+  * `strict: boolean // whether or not this AST occurs in strict code`
+  * `line: number // line number`
+  * `column: number // column number`
