@@ -40,4 +40,5 @@ Language processors are allowed to add additional, optional, attributes. Some us
 || `strict: boolean` || whether this AST occurs in strict code ||
 || `line: number` || line number ||
 || `column: number` || column number ||
+|| `source: string` || identifies the source from which the AST was parsed ||
 || `comment: string` || attach comment to AST node ||
