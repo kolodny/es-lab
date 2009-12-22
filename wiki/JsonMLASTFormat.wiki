@@ -42,3 +42,12 @@ Language processors are allowed to add additional, optional, attributes. Some us
 || `x-column: number` || column number ||
 || `x-source: string` || identifies the source from which the AST was parsed ||
 || `x-comment: string` || attach comment to AST node ||
+
+=== Issues ===
+
+Not entirely sure whether the literal node for `null` is valid JsonML:
+{{{
+[ "LiteralExpr", {type: "null", value: null} ]
+}}}
+
+The `value:` attribute contains the value `null` which is valid JSON, but may not be valid JsonML? If `null` is not valid JsonML, we should consider dropping the `value:` attribute for this node (at the expense of breaking uniformity with the other `LiteralExpr` nodes)
