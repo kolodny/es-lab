@@ -32,6 +32,8 @@ The `key:value` attributes of the AST format are used by some nodes:
 || `label: string` || in `ContinueStmt`, `BreakStmt` and `LabelledStmt` to denote label name ||
 || `op: string` || in `UnaryExpr`, `BinaryExpr`, `CountExpr` and `AssignExpr` to denote operator punctuator ||
 || `isPrefix: boolean` || in `CountExpr` to denote pre- or postfix operator ||
+|| `body: string` || in `RegExpExpr` to denote body of a regexp ||
+|| `flags: string` || in `RegExpExpr` to denote flags of a regexp ||
 
 Language processors are allowed to add additional, optional, attributes. Some useful attributes that could be supported for most AST nodes:
 
