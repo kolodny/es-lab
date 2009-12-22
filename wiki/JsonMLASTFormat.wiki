@@ -46,8 +46,10 @@ The `key:value` attributes of the AST format are used by some nodes:
 Language processors are allowed to add additional, optional, attributes. Some useful attributes that could be supported for most AST nodes:
 
 || `x-strict: boolean` || whether this AST occurs in strict code ||
-|| `x-line: number` || line number ||
-|| `x-column: number` || column number ||
+|| `x-start-line: number` || line number indicating start of span ||
+|| `x-start-column: number` || column number indicating start of span ||
+|| `x-end-line: number` || line number indicating end of span ||
+|| `x-end-column: number` || column number indicating end of span ||
 || `x-source: string` || identifies the source from which the AST was parsed ||
 || `x-comment: string` || attach comment to AST node ||
 
