@@ -36,11 +36,12 @@ The `key:value` attributes of the AST format are used by some nodes:
   * For identifiers and property names
     * `name: string`
   * For pre- and postfix expressions
-    * `op: string` // ++ or --
+    * `op: string // ++ or --`
     * `isPrefix: boolean` 
 
 Language processors are allowed to add additional, optional, attributes. Some useful attributes that could be supported for most AST nodes:
-  * `strict: boolean // whether this AST occurs in strict code`
-  * `line: number // line number`
-  * `column: number // column number`
-  * `comment: string // attach comment to AST node`
+
+|| `strict: boolean` || whether this AST occurs in strict code ||
+|| `line: number` || line number ||
+|| `column: number` || column number ||
+|| `comment: string` || attach comment to AST node ||
