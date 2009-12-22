@@ -22,20 +22,25 @@ By convention, the last 4 letters of "Type" represent a subtype:
 || Case | DefaultCase || `*Case` (only within a `SwitchStmt`) ||
 || Empty marker || `Empty` (for elisions in Array-literals, omitted parts of a For-statement and names of anonymous function expressions) ||
 
+All use-occurrences of variables appear as `IdExpr` nodes. All defining occurrences of variables appear as `IdPatt` nodes.
 
-The attributes of the AST are used by some nodes:
+The `key:value` attributes of the AST format are used by some nodes:
    
   * For literal ASTs:
     * `type: string // the type of literal`
     * `value: object // the value of the parsed literal`
   * For break, continue and labelled statements:
-    * `label: string`
+    * `label: string` // the label name
   * For unary, binary and assignment operators
-    * `op: string`
-  * For identifiers, function declarations
+    * `op: string` // the operator
+  * For identifiers and property names
     * `name: string`
+  * For pre- and postfix expressions
+    * `op: string` // ++ or --
+    * `isPrefix: boolean` 
 
 Language processors are allowed to add additional, optional, attributes. Some useful attributes that could be supported for most AST nodes:
-  * `strict: boolean // whether or not this AST occurs in strict code`
+  * `strict: boolean // whether this AST occurs in strict code`
   * `line: number // line number`
   * `column: number // column number`
+  * `comment: string // attach comment to AST node`
