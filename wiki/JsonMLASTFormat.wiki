@@ -25,19 +25,13 @@ By convention, the last 4 letters of "Type" represent a subtype:
 All use-occurrences of variables appear as `IdExpr` nodes. All defining occurrences of variables appear as `IdPatt` nodes.
 
 The `key:value` attributes of the AST format are used by some nodes:
-   
-  * For literal ASTs:
-    * `type: string // the type of literal`
-    * `value: object // the value of the parsed literal`
-  * For break, continue and labelled statements:
-    * `label: string` // the label name
-  * For unary, binary and assignment operators
-    * `op: string` // the operator
-  * For identifiers and property names
-    * `name: string`
-  * For pre- and postfix expressions
-    * `op: string // ++ or --`
-    * `isPrefix: boolean` 
+ 
+|| `type: string` || in `LiteralExpr` to denote type of literal ||
+|| `value: object`|| in `LiteralExpr` to denote value of parsed literal ||
+|| `name: string` || in `IdPatt` and `*Prop` to denote the name of a variable or property||
+|| `label: string` || in `ContinueStmt`, `BreakStmt` and `LabelledStmt` to denote label name ||
+|| `op: string` || in `UnaryExpr`, `BinaryExpr`, `CountExpr` and `AssignExpr` to denote operator punctuator ||
+|| `isPrefix: boolean || in `CountExpr` to denote pre- or postfix operator ||
 
 Language processors are allowed to add additional, optional, attributes. Some useful attributes that could be supported for most AST nodes:
 
