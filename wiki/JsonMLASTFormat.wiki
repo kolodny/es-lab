@@ -1,6 +1,8 @@
 #summary description of the JsonML AST format used by the es5 parser
 #labels Phase-Design,Parser
 
+=== AST Format ===
+
 Abstract syntax trees (ASTs) are generated in [http://jsonml.org JsonML] format and are of the form:
 
 {{{
@@ -13,6 +15,8 @@ Abstract syntax trees (ASTs) are generated in [http://jsonml.org JsonML] format 
 
 For an overview of all the different kinds of AST nodes, see the [http://code.google.com/p/es-lab/source/browse/trunk/tests/parser/parsertests.js test-suite] for the parser.
 
+=== Types ===
+
 By convention, the last 4 letters of "Type" represent a subtype:
 || Expressions || `*Expr` ||
 || Statements || `*Stmt` ||
@@ -24,6 +28,8 @@ By convention, the last 4 letters of "Type" represent a subtype:
 
 All use-occurrences of variables appear as `IdExpr` nodes. All defining occurrences of variables appear as `IdPatt` nodes.
 
+=== Mandatory Attributes ===
+
 The `key:value` attributes of the AST format are used by some nodes:
  
 || `type: string` || in `LiteralExpr` to denote type of literal ||
@@ -34,6 +40,8 @@ The `key:value` attributes of the AST format are used by some nodes:
 || `isPrefix: boolean` || in `CountExpr` to denote pre- or postfix operator ||
 || `body: string` || in `RegExpExpr` to denote body of a regexp ||
 || `flags: string` || in `RegExpExpr` to denote flags of a regexp ||
+
+=== Optional Attributes ===
 
 Language processors are allowed to add additional, optional, attributes. Some useful attributes that could be supported for most AST nodes:
 
