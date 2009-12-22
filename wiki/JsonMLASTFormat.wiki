@@ -21,7 +21,8 @@ By convention, the last 4 letters of "Type" represent a subtype:
 || Patterns || `*Patt` ||
 || Case | DefaultCase || `*Case` (only within a `SwitchStmt`) ||
 || Empty marker || `Empty` (for elisions in Array-literals, omitted parts of a For-statement and names of anonymous function expressions) ||
-     
+
+
 The attributes of the AST are used by some nodes:
    
   * For literal ASTs:
