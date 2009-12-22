@@ -11,6 +11,8 @@ Abstract syntax trees (ASTs) are generated in [http://jsonml.org JsonML] format 
    ... ]
 }}} 
 
+For an overview of all the different kinds of AST nodes, see the [http://code.google.com/p/es-lab/source/browse/trunk/tests/parser/parsertests.js test-suite] for the parser.
+
 By convention, the last 4 letters of "Type" represent a subtype:
   * Expressions: `*Expr`
   * Statements: `*Stmt`
