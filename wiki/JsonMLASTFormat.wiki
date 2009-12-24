@@ -1,6 +1,10 @@
 #summary description of the JsonML AST format used by the es5 parser
 #labels Phase-Design,Parser
 
+=== Parser Playground ===
+
+[http://es-lab.googlecode.com/svn/trunk/site/esparser/index.html ES5 Parser Playground]
+
 === AST Format ===
 
 Abstract syntax trees (ASTs) are generated in [http://jsonml.org JsonML] format and are of the form:
