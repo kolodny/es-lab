@@ -57,6 +57,7 @@ Added during verification and scope analysis:
 || `strict: boolean` || whether this AST occurs in strict code ||
 || `preOrder: number` || uniquely identify this node within its overall AST ||
 || `definition: number` || On an `IdExpr`, records the `preOrder:` number of the `IdPatt`, if any, of the corresponding definition. ||
+|| `scope: number` || On an `IdPatt`, records the `preOrder:` of the containing node in which this definition is in scope. ||
 
 Because of the limits of JsonML, some of the results of scope analysis cannot conveniently be represented within the AST itself, such as a list of free variable references. Rather, the preOrder numbers assigned here can be used as an index into a side table containing the results of scope analysis.
 
