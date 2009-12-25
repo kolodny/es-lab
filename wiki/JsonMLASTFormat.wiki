@@ -69,13 +69,13 @@ To be captured during parsing, for supporting both live and post-mortem source l
 || `endLine: number` || line number indicating end of span ||
 || `endColumn: number` || column number indicating end of span ||
 
-The source: string should serve much the same purpose as does Java's fully qualified path name. It identifies where the source is to be found relative to some root, so that debugging log records together with a source tree are relocatable. We postpone specifying the form of this string awaiting accepted module and package proposals.
+The `source:` string should serve much the same purpose as does Java's fully qualified path name. It identifies where the source is to be found relative to some root, so that debugging log records together with a source tree are relocatable. We postpone specifying the form of this string awaiting accepted module and package proposals.
 
 ==== Additional Optional Parsing Attributes ====
 
 || `comment: string` || last comment appearing before this AST node ||
 
-Some tools process directives buried in comments. Most often, such directives are in the last comment prior to the AST node they apply to. For more general capture of all comments, it is not clear how to represent that adequately in an abstract syntax tree structure, as opposed to a concrete parse tree structure, since some structural information is lost.
+Some tools process directives buried in comments. Most often, such directives are in the last comment prior to the AST node they apply to. For more general capture of all comments, it is not clear how to represent that adequately in an abstract syntax tree structure, as opposed to a concrete parse tree structure, since some structural information is lost. Perhaps also in a side table indexed by `preOrder:`
 
 === Issues ===
 
