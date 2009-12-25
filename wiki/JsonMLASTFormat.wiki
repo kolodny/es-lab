@@ -91,3 +91,57 @@ Not entirely sure whether the literal node for `null` is valid JsonML:
 }}}
 
 The `value:` attribute contains the value `null` which is valid JSON, but may not be valid JsonML? If `null` is not valid JsonML, we should consider dropping the `value:` attribute for this node (at the expense of breaking uniformity with the other `LiteralExpr` nodes)
+
+=== Visitor Protocol Summary ===
+
+|| `visitThisExpr({})` || `this` ||
+|| `visitIdExpr({name})` || `name` ||
+|| `visitRegExpExpr({body, flags})` || `/body/flags` ||
+|| `visitLiteralExpr({type, value})` || `'value'` ||
+|| `visitArrayExpr({}, var_optElementExprs)` || `[..]` ||
+|| --> ` visitEmpty({})` || `,,` ||
+|| `visitObjectExpr({}, var_Props)` || `({..})` ||
+|| --> ` visitDataProp({name}, valueExpr)` || `name: value` ||
+|| --> ` visitGetterProp({name}, funcExpr)` || `get name(){..}` ||
+|| --> ` visitSetterProp({name}, funcExpr)`     || `set name(v){..}` ||
+|| `visitMemberExpr({}, baseExpr, propExpr)` || `base[prop]` ||
+|| `visitInvokeExpr({}, baseExpr, propExpr, var_argExprs)` || `base[prop](...args)` ||
+|| `visitCallExpr({}, baseExpr, var_argExprs)` || `base(...args)` ||
+|| `visitNewExpr({}, baseExpr, var_argExprs)` || `new base(...args)` ||
+|| `visitTypeofExpr({}, xExpr)` || `typeof x` ||
+|| `visitUnaryExpr({op}, xExpr)` || `op x` ||
+|| `visitBinaryExpr({op}, xExpr, yExpr)` || `x op y` ||
+|| `visitLogicalAndExpr({}, xExpr, yExpr)` || `x && y` ||
+|| `visitLogicalOrExpr({}, xExpr, yExpr)` || `x |` `| y`||
+|| `visitConditionalExpr({}, xExpr, yExpr, zExpr)` || `x ? y : z` ||
+|| `visitAssignExpr({op}, lValue, rValue)` || `lValue op rValue` ||
+|| `visitCountExpr({op}, lValue)` || `((++|--)lValue | lValue(++|--))` ||
+|| `visitDeleteExpr({}, lValue)` || `delete lValue` ||
+
+|| `visitEvalExpr({}, xExpr)` || `eval(x)` ||
+|| `visitFunctionExpr({}, optIdPatt, paramDecl, var_Parts)` || `(function optId(...params) {..prologue; ..stmts})` ||
+|| `visitFunctionDecl({}, idPatt, paramDecl, var_Parts)` || `function id(...params) {..prologue; ..stmts}` ||
+|| --> ` visitPrologueDecl({directive})` || `'directive';` ||
+|| `visitVarDecl({}, var_varPatts)` || `var ..` ||
+|| --> ` visitInitPatt({}, idPatt, initExpr)` || `id = init` ||
+|| --> ` visitIdPatt({name})` || `name` ||
+|| `visitBlockStmt({}, var_Stmts)` || `{..}` ||
+|| `visitEmptyStmt({})` || `;` ||
+|| `visitIfStmt({}, condExpr, thenStmt, elseStmt)` || `if (cond) {t} else {e}` ||
+|| `visitDoWhileStmt({}, bodyStmt, condExpr)` || `do body while (cond)` ||
+|| `visitWhileStmt({}, condExpr, bodyStmt)` || `while (cond) body` ||
+|| `visitForStmt({}, initPart, condExpr, incrExpr, bodyStmt)` || `for (init; cond; incr) body` ||
+|| `visitForInStmt({}, lValue, collExpr, bodyStmt)` || `for (lValue in coll) body` ||
+|| `visitContinueStmt({label?})` || `continue optLabel` ||
+|| `visitBreakStmt({label?})` || `break optLabel` ||
+|| `visitReturnStmt({}, optExpr)` || `return optExpr` ||
+|| `visitWithStmt({}, headExpr, bodyStmt)` || `with (head) {body}` ||
+|| `visitSwitchStmt({}, headExpr, var_args)` || `switch (head) {..}` ||
+|| --> ` visitCase({}, headExpr, var_Stmts)` || `case head: ..stmts` ||
+|| --> ` visitDefaultCase({}, var_Stmts)` || `default: ..stmts` ||
+|| `visitLabelledStatement({label}, bodyStmt)` || `label: body` ||
+|| `visitThrowStmt({}, errExpr)` || `throw err` ||
+|| `visitTryCatchStmt({}, tStmt, errPatt, cStmt)` || `try {t} catch (err) {c}` ||
+|| `visitTryFinallyStmt({}, tStmt, fStmt)` || `try {t} finally {f}` ||
+|| `visitTryCatchFinallyStmt({}, tStmt, errPatt, cStmt, fStmt)` || `try {t} catch (err) {c} finally {f}` ||
+|| `visitDebuggerStmt({})` || `debugger` ||
