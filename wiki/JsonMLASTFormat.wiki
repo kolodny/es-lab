@@ -38,24 +38,44 @@ The `key:value` attributes of the AST format are used by some nodes:
  
 || `type: string` || in `LiteralExpr` to denote type of literal ||
 || `value: object`|| in `LiteralExpr` to denote value of parsed literal ||
-|| `name: string` || in `IdPatt` and `*Prop` to denote the name of a variable or property||
+|| `name: string` || in `IdPatt`, `IdExpr`, and `*Prop` to denote the name of a variable or property||
 || `label: string` || in `ContinueStmt`, `BreakStmt` and `LabelledStmt` to denote label name ||
 || `op: string` || in `UnaryExpr`, `BinaryExpr`, `CountExpr` and `AssignExpr` to denote operator punctuator ||
 || `isPrefix: boolean` || in `CountExpr` to denote pre- or postfix operator ||
 || `body: string` || in `RegExpExpr` to denote body of a regexp ||
 || `flags: string` || in `RegExpExpr` to denote flags of a regexp ||
+|| `directive: string` || in `PrologueDecl` to denote the source contents of a directive prologue (not yet implemented -- see issue 5) ||
 
 === Optional Attributes ===
 
 Language processors are allowed to add additional, optional, attributes. Some useful attributes that could be supported for most AST nodes:
 
-|| `x-strict: boolean` || whether this AST occurs in strict code ||
-|| `x-start-line: number` || line number indicating start of span ||
-|| `x-start-column: number` || column number indicating start of span ||
-|| `x-end-line: number` || line number indicating end of span ||
-|| `x-end-column: number` || column number indicating end of span ||
-|| `x-source: string` || identifies the source from which the AST was parsed ||
-|| `x-comment: string` || attach comment to AST node ||
+==== Verification and scoping Attributes ====
+
+Added during verification and scope analysis: 
+
+|| `strict: boolean` || whether this AST occurs in strict code ||
+|| `preOrder: number` || uniquely identify this node within its overall AST ||
+
+Because of the limits of JsonML, the results of scope analysis cannot conveniently be represented within the AST itself. Rather, the preOrder numbers assigned here can be used as an index into a side table containing the results of scope analysis.
+
+==== Debugging Attributes ====
+
+To be captured during parsing, for supporting both live and post-mortem source level debugging: 
+
+|| `source: string` || identifies the source from which the AST was parsed ||
+|| `startLine: number` || line number indicating start of span ||
+|| `startColumn: number` || column number indicating start of span ||
+|| `endLine: number` || line number indicating end of span ||
+|| `endColumn: number` || column number indicating end of span ||
+
+The source: string should serve much the same purpose as does Java's fully qualified path name. It identifies where the source is to be found relative to some root, so that debugging log records together with a source tree are relocatable. We postpone specifying the form of this string awaiting accepted module and package proposals.
+
+==== Additional Optional Parsing Attributes ====
+
+|| `comment: string` || last comment appearing before this AST node ||
+
+Some tools process directives buried in comments. Most often, such directives are in the last comment prior to the AST node they apply to. For more general capture of all comments, it is not clear how to represent that adequately in an abstract syntax tree structure, as opposed to a concrete parse tree structure, since some structural information is lost.
 
 === Issues ===
 
