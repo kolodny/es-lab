@@ -1,6 +1,10 @@
 #summary description of the JsonML AST format used by the es5 parser
 #labels Phase-Design,Parser
 
+== Table of Contents ==
+
+<wiki:toc />
+
 === Parser Playground ===
 
 [http://es-lab.googlecode.com/svn/trunk/site/esparser/index.html ES5 Parser Playground]
@@ -17,7 +21,7 @@ Abstract syntax trees (ASTs) are generated in [http://jsonml.org JsonML] format 
    ... ]
 }}} 
 
-For an overview of all the different kinds of AST nodes, see the [http://code.google.com/p/es-lab/source/browse/trunk/tests/parser/parsertests.js test-suite] for the parser.
+For an overview of all the different kinds of AST nodes, see the [http://code.google.com/p/es-lab/source/browse/trunk/tests/parser/parsertests.js test-suite] for the parser or the [#Visitor_Protocol_Summary summary] below.
 
 === Types ===
 
