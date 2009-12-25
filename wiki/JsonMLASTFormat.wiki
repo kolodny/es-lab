@@ -74,6 +74,8 @@ To be captured during parsing, for supporting both live and post-mortem source l
 
 The `source:` string should serve much the same purpose as does Java's fully qualified path name. It identifies where the source is to be found relative to some root, so that debugging log records together with a source tree are relocatable. We postpone specifying the form of this string awaiting accepted module and package proposals.
 
+Line counts start at 1. Column counts start at 0. If `startLine:` is included but `endLine:` is omitted, then `endLine:` defaults to `startLine:`. If `startColumn:` is omitted, then `startColumn:` defaults to 0. If `endColumn:` is omitted, `endColumn:` defaults to the last column of `endLine:`.
+
 ==== Additional Optional Parsing Attributes ====
 
 || `comment: string` || last comment appearing before this AST node ||
