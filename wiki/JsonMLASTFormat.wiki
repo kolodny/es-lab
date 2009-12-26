@@ -122,10 +122,12 @@ The `value:` attribute contains the value `null` which is valid JSON, but may no
 || `visitCountExpr({op, isPrefix}, lValue)` || `((++|--)lValue | lValue(++|--))` ||
 || `visitDeleteExpr({}, lValue)` || `delete lValue` ||
 
+|| `visitProgram({}, ...parts)` || `..prologue; ..stmts` ||
+|| --> ` visitPrologueDecl({directive})` || `'directive';` ||
+
 || `visitEvalExpr({}, xExpr)` || `eval(x)` ||
 || `visitFunctionExpr({}, optIdPatt, paramDecl, ...parts)` || `(function optId(...params) {..prologue; ..stmts})` ||
 || `visitFunctionDecl({}, idPatt, paramDecl, ...parts)` || `function id(...params) {..prologue; ..stmts}` ||
-|| --> ` visitPrologueDecl({directive})` || `'directive';` ||
 || `visitVarDecl({}, ...varPatts)` || `var ..` ||
 || --> ` visitInitPatt({}, idPatt, initExpr)` || `id = init` ||
 || --> ` visitIdPatt({name})` || `name` ||
