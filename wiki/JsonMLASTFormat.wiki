@@ -102,16 +102,16 @@ The `value:` attribute contains the value `null` which is valid JSON, but may no
 || `visitIdExpr({name})` || `name` ||
 || `visitRegExpExpr({body, flags})` || `/body/flags` ||
 || `visitLiteralExpr({type, value})` || `'value'` ||
-|| `visitArrayExpr({}, var_optElementExprs)` || `[..]` ||
+|| `visitArrayExpr({}, ...optElementExprs)` || `[..]` ||
 || --> ` visitEmpty({})` || `,,` ||
-|| `visitObjectExpr({}, var_Props)` || `({..})` ||
+|| `visitObjectExpr({}, ...props)` || `({..})` ||
 || --> ` visitDataProp({name}, valueExpr)` || `name: value` ||
 || --> ` visitGetterProp({name}, funcExpr)` || `get name(){..}` ||
 || --> ` visitSetterProp({name}, funcExpr)`     || `set name(v){..}` ||
 || `visitMemberExpr({}, baseExpr, propExpr)` || `base[prop]` ||
-|| `visitInvokeExpr({}, baseExpr, propExpr, var_argExprs)` || `base[prop](...args)` ||
-|| `visitCallExpr({}, baseExpr, var_argExprs)` || `base(...args)` ||
-|| `visitNewExpr({}, baseExpr, var_argExprs)` || `new base(...args)` ||
+|| `visitInvokeExpr({}, baseExpr, propExpr, ...argExprs)` || `base[prop](...args)` ||
+|| `visitCallExpr({}, baseExpr, ...argExprs)` || `base(...args)` ||
+|| `visitNewExpr({}, baseExpr, ...argExprs)` || `new base(...args)` ||
 || `visitTypeofExpr({}, xExpr)` || `typeof x` ||
 || `visitUnaryExpr({op}, xExpr)` || `op x` ||
 || `visitBinaryExpr({op}, xExpr, yExpr)` || `x op y` ||
@@ -123,13 +123,13 @@ The `value:` attribute contains the value `null` which is valid JSON, but may no
 || `visitDeleteExpr({}, lValue)` || `delete lValue` ||
 
 || `visitEvalExpr({}, xExpr)` || `eval(x)` ||
-|| `visitFunctionExpr({}, optIdPatt, paramDecl, var_Parts)` || `(function optId(...params) {..prologue; ..stmts})` ||
-|| `visitFunctionDecl({}, idPatt, paramDecl, var_Parts)` || `function id(...params) {..prologue; ..stmts}` ||
+|| `visitFunctionExpr({}, optIdPatt, paramDecl, ...parts)` || `(function optId(...params) {..prologue; ..stmts})` ||
+|| `visitFunctionDecl({}, idPatt, paramDecl, ...parts)` || `function id(...params) {..prologue; ..stmts}` ||
 || --> ` visitPrologueDecl({directive})` || `'directive';` ||
-|| `visitVarDecl({}, var_varPatts)` || `var ..` ||
+|| `visitVarDecl({}, ...varPatts)` || `var ..` ||
 || --> ` visitInitPatt({}, idPatt, initExpr)` || `id = init` ||
 || --> ` visitIdPatt({name})` || `name` ||
-|| `visitBlockStmt({}, var_Stmts)` || `{..}` ||
+|| `visitBlockStmt({}, ...stmts)` || `{..}` ||
 || `visitEmptyStmt({})` || `;` ||
 || `visitIfStmt({}, condExpr, thenStmt, elseStmt)` || `if (cond) {t} else {e}` ||
 || `visitDoWhileStmt({}, bodyStmt, condExpr)` || `do body while (cond)` ||
@@ -140,9 +140,9 @@ The `value:` attribute contains the value `null` which is valid JSON, but may no
 || `visitBreakStmt({label?})` || `break optLabel` ||
 || `visitReturnStmt({}, optExpr)` || `return optExpr` ||
 || `visitWithStmt({}, headExpr, bodyStmt)` || `with (head) {body}` ||
-|| `visitSwitchStmt({}, headExpr, var_args)` || `switch (head) {..}` ||
-|| --> ` visitCase({}, headExpr, var_Stmts)` || `case head: ..stmts` ||
-|| --> ` visitDefaultCase({}, var_Stmts)` || `default: ..stmts` ||
+|| `visitSwitchStmt({}, headExpr, ...cases)` || `switch (head) {..}` ||
+|| --> ` visitCase({}, headExpr, ...stmts)` || `case head: ..stmts` ||
+|| --> ` visitDefaultCase({}, ...stmts)` || `default: ..stmts` ||
 || `visitLabelledStatement({label}, bodyStmt)` || `label: body` ||
 || `visitThrowStmt({}, errExpr)` || `throw err` ||
 || `visitTryCatchStmt({}, tStmt, errPatt, cStmt)` || `try {t} catch (err) {c}` ||
