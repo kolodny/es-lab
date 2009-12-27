@@ -136,8 +136,7 @@ The `value:` attribute contains the value `null` which is valid JSON, but may no
 || `visitIfStmt({}, condExpr, thenStmt, elseStmt)` || `if (cond) {t} else {e}` ||
 || `visitDoWhileStmt({}, bodyStmt, condExpr)` || `do body while (cond)` ||
 || `visitWhileStmt({}, condExpr, bodyStmt)` || `while (cond) body` ||
-|| `visitForStmt({}, initPart, condExpr, incrExpr, bodyStmt)` || `for (init; cond; incr) body` ||
-|| --> ` visitEmpty({})` || `for(;;) body` ||
+|| `visitForStmt({}, optInitPart, optCondExpr, optIncrExpr, bodyStmt)` || `for (optInit; optCond; optIncr) body` ||
 || `visitForInStmt({}, lValue, collExpr, bodyStmt)` || `for (lValue in coll) body` ||
 || `visitContinueStmt({label?})` || `continue optLabel` ||
 || `visitBreakStmt({label?})` || `break optLabel` ||
