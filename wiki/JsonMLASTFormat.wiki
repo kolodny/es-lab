@@ -118,7 +118,7 @@ The `value:` attribute contains the value `null` which is valid JSON, but may no
 || `visitLogicalAndExpr({}, xExpr, yExpr)` || `x && y` ||
 || `visitLogicalOrExpr({}, xExpr, yExpr)` || `x |` `| y`||
 || `visitConditionalExpr({}, xExpr, yExpr, zExpr)` || `x ? y : z` ||
-|| `visitAssignExpr({op}, lValue, rValue)` || `lValue op rValue` ||
+|| `visitAssignExpr({op}, lValue, rExpr)` || `lValue op r` ||
 || `visitCountExpr({op, isPrefix}, lValue)` || `((++|--)lValue | lValue(++|--))` ||
 || `visitDeleteExpr({}, lValue)` || `delete lValue` ||
 
