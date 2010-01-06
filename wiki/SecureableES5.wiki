@@ -1,6 +1,6 @@
 #summary What is "Secureable EcmaScript 5"?
 
-= What is "Secureable EcmaScript 5"? =
+= What is "Secureable !EcmaScript 5"? =
 
 Informally, it is an ES5 implementation in which [http://code.google.com/p/es-lab/source/browse/#svn/trunk/src/ses these scripts] succeed, and in which that success results in an object-capability safe environment for untrusted code imported through the resulting `eval` or `Function`.
 
