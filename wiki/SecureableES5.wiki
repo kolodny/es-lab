@@ -2,7 +2,7 @@
 
 = What is "Secureable !EcmaScript 5"? =
 
-Informally, it is an ES5 implementation in which [http://code.google.com/p/es-lab/source/browse/#svn/trunk/src/ses these scripts] succeed, and in which that success results in an object-capability safe environment for untrusted code imported through the resulting `eval` or `Function`.
+Informally, it is an ES5 implementation in which [http://code.google.com/p/es-lab/source/browse/#svn/trunk/src/ses initSES.js] succeeds, and in which that success results in an object-capability safe environment for untrusted code imported through the resulting `eval` or `Function`.
 
 Beyond being simply a conforming ES5 implementation, the additional constraints:
   * All properties on accessible primordial objects (primordial objects other than the global object) must be deleteable. The `initSES.js` script will delete all properties not on its whitelist, where its whitelist (at the time of this writing) includes exactly the global names and path names specified in ES5.
