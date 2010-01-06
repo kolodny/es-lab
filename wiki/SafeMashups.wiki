@@ -33,9 +33,9 @@ Then a web page could obtain and use this library by doing
     xhr.send();
 }}}
 
-By this pattern, the badCode might still lock up your page with an infinite loop. Beyond that, its only ability to affect your world is according to the objects you make accessible to `result`. The API of good SES libraries should demand only objects that provide it least authority, enabling that libraries users to understand and bound the risks involved in using that library. 
+By this pattern, the badCode might still lock up your page with an infinite loop. Beyond that, its only ability to affect your world is according to the objects you make accessible to `result`. The API of good SES libraries should demand only objects that provide it least authority, enabling that libraries users to understand and bound the risks involved in using that library.
 
 Of course, this applies to other forms of mashups besides libraries per se, such as gadgets, analytics, etc... In that case, if the browser further supports
    * [http://wiki.ecmascript.org/doku.php?id=strawman:proxies Catchalls]
    * [http://wiki.ecmascript.org/doku.php?id=strawman:weak_references EphemeronTables]
-then a gadget can be imported within a [http://code.google.com/p/es-lab/source/browse/trunk/src/membrane.js] by using, for example, the `eval1` from [http://code.google.com/p/es-lab/ compartment pattern] instead of `eval` above. The presence of that gadget on the page can then be revoked at will, after which it will no longer even be able to occupy memory.
+then a gadget can be imported within a [http://code.google.com/p/es-lab/source/browse/trunk/src/membrane.js Membrane] by using, for example, the `eval1` from [http://code.google.com/p/es-lab/ compartment pattern] instead of `eval` above. The presence of that gadget on the page can then be revoked at will, after which it will no longer even be able to occupy memory.
