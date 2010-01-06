@@ -9,7 +9,7 @@ Beyond being simply a conforming ES5 implementation, the additional constraints:
   * Of the objects that survive this step, i.e., those named by that whitelist, any additional behaviors they may have beyond that specified in ES5 must not imply they provide authority exceeding what their specified behavior by itself would provide. For example, the [http://code.google.com/p/google-caja/issues/detail?id=528 global-state behavior] of `RegExp.prototype.exec` on some browsers, while not violating the ES5 spec, would cause such an ES5 system to not be classified as a _Secureable ES5 system_.
   * *What else???*
 
-= What SES (Secure !EcmaScript) results? =
+= What the resulting SES (Secure !EcmaScript)? =
 
 In a frame of a secureable ES5 in which [http://code.google.com/p/es-lab/source/browse/#svn/trunk/src/ses initSES.js] has been run, either prior to other scripts or in cooperation with other scripts, the resulting "language" as seen by that frame's new `eval` and `Function` bindings differs from full ES5 in the following ways:
    # All properties of accessible primordials not defined by the ES5 spec are absent, even if the browser originally provided them.
