@@ -7,7 +7,7 @@ Currently, to mashup with library code provided by `https://example.org/badCode.
   * the `badCode.js` library is SES compatible, and
   * the browser supports the [http://dev.w3.org/2006/waf/UMP/ Uniform Messaging Policy],
 
-then the library's server could serve `badCode.js` with an `Access-Control-Allow-Origin: *` header, for example, by putting
+then the library's server could serve `badCode.js` with an `Access-Control-Allow-Origin:*` header, for example, by putting
 
 {{{
     <FilesMatch "\.js$">
