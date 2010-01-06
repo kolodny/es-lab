@@ -15,7 +15,7 @@ then the library's server could serve `badCode.js` with an `Access-Control-Allow
     </FilesMatch>
 }}}
 
-in a root `.htaccess` file. Adding this header is a good idea for all resources that parse as JavaScript anyway, as should be the case for all `*.js` files and for all JSONP services, since these resources are already not protected by the Same Origin Policy.
+in a root `.htaccess` file. Adding this header is a good idea for all resources that parse as !JavaScript anyway, as should be the case for all `*.js` files and for all JSONP services, since these resources are already not protected by the Same Origin Policy.
 
 Then a web page could obtain and use this library by doing
 
