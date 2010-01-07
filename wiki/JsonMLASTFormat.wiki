@@ -49,7 +49,7 @@ The `key:value` attributes of the AST format are used by some nodes:
 || `isPrefix: boolean` || in `CountExpr` to denote pre- or postfix operator ||
 || `body: string` || in `RegExpExpr` to denote body of a regexp ||
 || `flags: string` || in `RegExpExpr` to denote flags of a regexp ||
-|| `directive: string` || in `PrologueDecl` to denote the source contents of a directive prologue (not yet implemented -- see issue 5) ||
+|| `directive: string` || in `PrologueDecl` to denote the source contents of a directive prologue ||
 
 === Optional Attributes ===
 
