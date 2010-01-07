@@ -63,10 +63,13 @@ Added during verification and scope analysis:
 || `preOrder: number` || uniquely identify this node within its overall AST ||
 || `definition: number` || On an `IdExpr`, records the `preOrder:` number of the `IdPatt`, if any, of the corresponding definition. ||
 || `scope: number` || On an `IdPatt`, records the `preOrder:` of the containing node in which this definition is in scope. ||
+|| `const: true` || On an `IdPatt`, records whether the declared variable is assignable ||
 
 Because of the limits of JsonML, some of the results of scope analysis cannot conveniently be represented within the AST itself, such as a list of free variable references. Rather, the preOrder numbers assigned here can be used as an index into a side table containing the results of scope analysis.
 
 The `definition:` attribute of an `IdExpr` is `-1` if this `IdExpr` is a free occurrence, or `NaN` if static scoping is ambiguous. A static scoping ambiguity cannot appear in a strict `Program`, but it can appear in a strict function within a non-strict `Program`.
+
+In ES5, the only `IdPatt` for which `const: true` should appear is the name of a named `FunctionExpr`.
 
 ==== Debugging Attributes ====
 
