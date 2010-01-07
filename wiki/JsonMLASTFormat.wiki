@@ -33,6 +33,7 @@ By convention, the last 4 letters of "Type" represent a subtype:
 || Patterns || `*Patt` ||
 || Case | !DefaultCase || `*Case` (only within a `SwitchStmt`) ||
 || Empty marker || `Empty` (for elisions in Array-literals, omitted parts of a For-statement and names of anonymous function expressions) ||
+|| Program || `Program` (the goal production of the Grammar) ||
 
 All use-occurrences of variables appear as `IdExpr` nodes. All defining occurrences of variables appear as `IdPatt` nodes.
 
