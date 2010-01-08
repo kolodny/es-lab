@@ -132,7 +132,6 @@ Arguments suffixed with `?` in the first column below may be absent in the AST.
 
 || `visitProgram({}, ...parts)` || `..prologue; ..stmts` ||
 || --> ` visitPrologueDecl({directive})` || `'directive';` ||
-
 || `visitEvalExpr({}, xExpr)` || `eval(x)` ||
 || `visitFunctionExpr({}, optIdPatt, paramDecl, ...parts)` || `(function optId(...params) {..prologue; ..stmts})` ||
 || `visitFunctionDecl({}, idPatt, paramDecl, ...parts)` || `function id(...params) {..prologue; ..stmts}` ||
@@ -140,6 +139,7 @@ Arguments suffixed with `?` in the first column below may be absent in the AST.
 || `visitVarDecl({}, ...varPatts)` || `var ..` ||
 || --> ` visitInitPatt({}, idPatt, initExpr)` || `id = init` ||
 || --> ` visitIdPatt({name})` || `name` ||
+
 || `visitBlockStmt({}, ...stmts)` || `{..}` ||
 || `visitEmptyStmt({})` || `;` ||
 || `visitIfStmt({}, condExpr, thenStmt, elseStmt)` || `if (cond) {t} else {e}` ||
