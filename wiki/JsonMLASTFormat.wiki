@@ -15,7 +15,7 @@ Abstract syntax trees (ASTs) are generated in [http://jsonml.org JsonML] format 
 
 {{{
  [ "Type",
-   { key : value attributes },
+   { attr1 : val1, attr2: val2, ... },
    childNode1,
    childNode2,
    ... ]
