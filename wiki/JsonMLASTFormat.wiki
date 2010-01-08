@@ -33,7 +33,7 @@ By convention, the last 4 letters of "Type" represent a subtype:
 || Patterns || `*Patt` ||
 || Case | !DefaultCase || `*Case` (only within a `SwitchStmt`) ||
 || Catch clause || `CatchClause` (only within a `TryStmt`) ||
-|| Empty marker || `Empty` (for elisions in Array-literals, omitted parts of a for-statement, names of anonymous function expressions and catch-clauses in try-finally statements) ||
+|| Empty marker || `Empty` (for elisions in Array-literals, omitted parts of a for-statement, the name of an anonymous function expression and the catch-clause of a try-finally statement) ||
 || Program || `Program` (the goal production of the Grammar) ||
 
 All use-occurrences of variables appear as `IdExpr` nodes. All defining occurrences of variables appear as `IdPatt` nodes.
