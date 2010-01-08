@@ -155,7 +155,6 @@ Everywhere `opt*` appears in the first column below, it means an `[Empty]` may a
 || --> ` visitDefaultCase({}, ...stmts)` || `default: ..stmts` ||
 || `visitLabelledStatement({label}, bodyStmt)` || `label: body` ||
 || `visitThrowStmt({}, errExpr)` || `throw err` ||
-|| `visitTryCatchStmt({}, tStmt, errPatt, cStmt)` || `try {t} catch (err) {c}` ||
-|| `visitTryFinallyStmt({}, tStmt, fStmt)` || `try {t} finally {f}` ||
-|| `visitTryCatchFinallyStmt({}, tStmt, errPatt, cStmt, fStmt)` || `try {t} catch (err) {c} finally {f}` ||
+|| `visitTryStmt({}, tStmt, optCatchClause, fStmt?)` || `try {t} catch (err) {c} finally {f}` ||
+|| --> ` visitCatchClause({}, idPatt, cStmt)` || `catch(id) { c } ||
 || `visitDebuggerStmt({})` || `debugger` ||
