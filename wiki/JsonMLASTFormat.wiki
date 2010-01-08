@@ -133,7 +133,7 @@ Arguments suffixed with `?` in the first column below may be absent in the AST.
 || `visitProgram({}, ...parts)` || `..prologue; ..stmts` ||
 || --> ` visitPrologueDecl({directive})` || `'directive';` ||
 
-|| `visitEvalExpr({}, xExpr)` || `eval(x)` ||
+|| `visitEvalExpr({}, ...exprs)` || `eval(...exprs)` ||
 || `visitFunctionExpr({}, optIdPatt, paramDecl, ...parts)` || `(function optId(...params) {..prologue; ..stmts})` ||
 || `visitFunctionDecl({}, idPatt, paramDecl, ...parts)` || `function id(...params) {..prologue; ..stmts}` ||
 || --> ` visitParamDecl({}, ...idPatts)` || `(...params)` ||
