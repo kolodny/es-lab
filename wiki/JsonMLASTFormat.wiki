@@ -31,7 +31,8 @@ By convention, the last 4 letters of "Type" represent a subtype:
 || Declarations || `*Decl` ||
 || Property definitions || `*Prop` ||
 || Patterns || `*Patt` ||
-|| Case | !DefaultCase || `*Case` (only within a `SwitchStmt`) ||
+|| Case | DefaultCase || `*Case` (only within a `SwitchStmt`) ||
+|| Catch clause || `CatchClause` (only within a `TryStmt`) ||
 || Empty marker || `Empty` (for elisions in Array-literals, omitted parts of a For-statement and names of anonymous function expressions) ||
 || Program || `Program` (the goal production of the Grammar) ||
 
