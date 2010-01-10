@@ -3,7 +3,7 @@
 = Safe Mashups =
 
 Currently, to mashup with library code provided by `https://example.org/badCode.js`, one might say `<script src="https://example.org/badCode.js">`, leaving oneself fully vulnerable to `example.org`. Instead, if 
-  * the browser supports [SecureEcmaScript SES], either directly or by running [http://code.google.com/p/es-lab/source/browse/#svn/trunk/src/ses these scripts] on a [SecureableES5 secureable ES5] implementation,
+  * the browser supports [SecureEcmaScript SES], either directly or by running [http://code.google.com/p/es-lab/source/browse/trunk/src/ses/ these scripts] on a [SecureableES5 secureable ES5] implementation,
   * the `badCode.js` library is SES compatible, and
   * the browser supports the [http://dev.w3.org/2006/waf/UMP/ Uniform Messaging Policy],
 
