@@ -2,7 +2,7 @@
 
 = How does draft SES (Secure !EcmaScript) differ from ES5? =
 
-In a frame of a [SecureableES5 secureable ES5] in which [http://code.google.com/p/es-lab/source/browse/#svn/trunk/src/ses initSES.js] has been run, either prior to other scripts or in cooperation with other scripts, the resulting "language" as seen by that frame's new `eval` and `Function` bindings differs from full ES5 in the following ways:
+In a frame of a [SecureableES5 secureable ES5] in which [http://code.google.com/p/es-lab/source/browse/trunk/src/ses/ initSES.js] has been run, either prior to other scripts or in cooperation with other scripts, the resulting "language" as seen by that frame's new `eval` and `Function` bindings differs from full ES5 in the following ways:
    # All properties of accessible primordials not defined by the ES5 spec are absent, even if the browser originally provided them.
    # All accessible primordials (all primordials other than the global object) are frozen.
    # The ES5-defined properties of the global object are frozen, though the global object is not frozen as a whole and its other properties are not perturbed. The global variables defined by the ES5 spec are thus effectively `const`. 
