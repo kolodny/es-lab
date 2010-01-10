@@ -6,7 +6,7 @@ In a frame of a [SecureableES5 secureable ES5] in which [http://code.google.com/
    # All properties of accessible primordials not defined by the ES5 spec are absent, even if the browser originally provided them.
    # All accessible primordials (all primordials other than the global object) are frozen.
    # The ES5-defined properties of the global object are frozen, though the global object is not frozen as a whole and its other properties are not perturbed. The global variables defined by the ES5 spec are thus effectively `const`. 
-   # All calls to `eval` are indirect calls to the SES eval function. SES does not have a direct eval operator.
+   # All calls to `eval` are calls to the SES _indirect eval function_. SES does not have a _direct eval operator_.
    # All code is only in the strict subset of ES5, whether it so declares or not.
    # The top level binding of `this` in an evaled Program is not the global object, but rather a frozen root object containing just the globals defined in the ES5 spec.
    # Only the global variables defined by the ES5 spec are addressable as free variables.
