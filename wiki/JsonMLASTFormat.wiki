@@ -92,15 +92,6 @@ Line counts start at 1. Column counts start at 0. If `startLine:` is included bu
 
 Some tools process directives buried in comments. Most often, such directives are in the last comment prior to the AST node they apply to. For more general capture of all comments, it is not clear how to represent that adequately in an abstract syntax tree structure, as opposed to a concrete parse tree structure, since some structural information is lost. Perhaps also in a side table indexed by `preOrder:`
 
-=== Issues ===
-
-Not entirely sure whether the literal node for `null` is valid JsonML:
-{{{
-[ "LiteralExpr", {type: "null", value: null} ]
-}}}
-
-The `value:` attribute contains the value `null` which is valid JSON, but may not be valid JsonML? If `null` is not valid JsonML, we should consider dropping the `value:` attribute for this node (at the expense of breaking uniformity with the other `LiteralExpr` nodes)
-
 === Visitor Protocol Summary ===
 
 Arguments named `opt*` in the first column below may refer to `[Empty]` AST nodes.
