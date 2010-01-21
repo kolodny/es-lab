@@ -21,3 +21,12 @@ At composition time, the composer can avoid name clashes by means of two operati
 Traits form a composition mechanism that is entirely orthogonal to prototype-delegation (i.e. inheritance between objects). The 'parent' object of a trait is of no consequence: it is ignored during composition (composition of traits looks only at 'own' properties). Traits are assumed to be composed only via trait composition, not by means of delegation.
 
 However, once all traits are composed into a composite that should be used as a 'finalized' or 'completed' object, that 'completed' object can itself take part in prototype-delegation like any other regular object. It may delegate to a parent object, and it may itself be delegated to by other objects.
+
+TODO:
+  * explain library API, four composition operators
+  * explain `required` convention
+  * diamond inheritance of methods
+  * branding / testing 'type' of composed objects
+  * performance and partial evaluation
+  * show an example
+  * compare with original traits (cf. Grafts proposal)
