@@ -6,7 +6,7 @@ The file [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/traits.
 
 = Background: Traits =
 
-Traits were originally defines as 'composable units of behavior' [[#References 1]]: reusable groups of methods that could be composed together to form a class. Their purpose is to encourage _reuse_ of methods across class hierarchies. Single-inheritance languages often suffer from methods being duplicated across hierarchies because single inheritance can only describe reuse trees, not graphs, thus violating the DRY principle.
+Traits were originally defines as 'composable units of behavior' [[#References 1]]: reusable groups of methods that could be composed together to form a class. Their purpose is to encourage _reuse_ of methods across class hierarchies. Single-inheritance languages often suffer from methods being duplicated across hierarchies because single inheritance can only describe reuse trees, not graphs, often forcing programmers to violate the DRY principle.
 
 Traits may _provide_ and _require_ a number of methods. Required methods are like abstract methods in OO class hierarchies: their implementation should be provided by another trait or class. For example, "enumerability" of a collection object can be encoded as a trait providing all kinds of higher-order methods on collections based on a single method `each` that returns successive elements of the collection (cf. Ruby's [http://ruby-doc.org/core/classes/Enumerable.html Enumerable module]) (I used pseudo-code for clarity):
 
