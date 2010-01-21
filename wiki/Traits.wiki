@@ -2,7 +2,7 @@
 
 = Introduction =
 
-The file [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/traits.js traits.js] provides an ES5 implementation of Traits as defined in: [http://scg.unibe.ch/archive/papers/Scha03aTraits.pdf "Traits: Composable units of Behavior" (Scharli et. al, ECOOP 2003)] but closer to the object-based, lexically nestable traits defined in: [http://prog.vub.ac.be/Publications/2009/vub-prog-tr-09-04.pdf "Adding State and Visibility Control to Traits using Lexical Nesting" (Van Cutsem et. al, ECOOP 2009)]
+The file [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/traits.js traits.js] provides an ES5 implementation of Traits as defined in [#References 1] but closer to the object-based, lexically nestable traits defined in: [#References 2]
 
 The library currently already works on Rhino (tested on v1.7 release 3).
 
@@ -31,3 +31,9 @@ TODO:
   * performance and partial evaluation
   * show an example
   * compare with original traits (cf. Grafts proposal, compile-time vs run-time entities, state, computed exclude vs class precedence over traits)
+
+== References ==
+
+  * [1] "Traits: Composable units of Behavior" (Scharli et. al, ECOOP 2003) ([http://scg.unibe.ch/archive/papers/Scha03aTraits.pdf paper])
+  * [2] "Adding State and Visibility Control to Traits using Lexical Nesting" (Van Cutsem et. al, ECOOP 2009) ([[http://prog.vub.ac.be/Publications/2009/vub-prog-tr-09-04.pdf paper])
+  * [3] [http://www.stefan-marr.de/pages/request-for-comments-horizontal-reuse-for-php Horizontal Reuse for PHP]: 'traits' vs 'grafts'
