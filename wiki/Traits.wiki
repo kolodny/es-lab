@@ -2,8 +2,9 @@
 
 = Introduction =
 
+The file [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/traits.js traits.js] provides an ES5 implementation of Traits as defined in: [http://scg.unibe.ch/archive/papers/Scha03aTraits.pdf "Traits: Composable units of Behavior" (Scharli et. al, ECOOP 2003)] but closer to the object-based, lexically nestable traits defined in: [http://prog.vub.ac.be/Publications/2009/vub-prog-tr-09-04.pdf "Adding State and Visibility Control to Traits using Lexical Nesting" (Van Cutsem et. al, ECOOP 2009)]
 
-An ES5 implementation of Traits as defined in: [http://scg.unibe.ch/archive/papers/Scha03aTraits.pdf "Traits: Composable units of Behavior" (Scharli et. al, ECOOP 2003)] but closer to the object-based, lexically nestable traits defined in: [http://prog.vub.ac.be/Publications/2009/vub-prog-tr-09-04.pdf "Adding State and Visibility Control to Traits using Lexical Nesting" (Van Cutsem et. al, ECOOP 2009)]
+The library currently already works on Rhino (tested on v1.7 release 3).
 
 A trait can be any object. It can depend on mutable state, but it is advised to always expose such stateful traits via 'maker' functions, to prevent a stateful trait from being composed multiple times with different objects (this is possible, but state is then shared between the two composers, which may result in very bad interactions).
 
