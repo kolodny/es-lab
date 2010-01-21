@@ -29,16 +29,17 @@ var r = new Range(0,5);
 r.inject(0,function(a,b){return a+b;}); // 10
 }}}
 
-Traits are not meant to be instantiated or used directly. They are only used for reuse and composition.
-Traits can be recursively composed into larger, but possibly still incomplete, composite traits. Classes can be composed with traits, and when they do, they should ensure that the requirements and 
+Traits are not meant to be instantiated or used directly. They are only used for reuse and composition. Traits can be recursively composed into larger, but possibly still incomplete, composite traits. Classes can be composed with traits. Classes, unlike traits, must be complete (or remain abstract classes). Traits cannot be composed by means of inheritance, but a class composed of one or more traits can also take part in inheritance. Methods provided by traits will override methods inherited from its superclass.
 
-The big difference between traits and alternative composition techniques such as multiple inheritance and mixins is that upon trait composition, name conflicts (a.k.a. name clashes) should be explicitly resolved by the composer. This is in contrast to mixins and multiple inheritance, which define a certain linearization order that defines an implicit precedence between the composed entities, with one entity shadowing the methods of another entity. While such systems often work for well in small reuse scenario's, they are not robust: small changes in the way mixins/classes are ordered somewhere far away may impact the way name clashes are resolve further down the inheritance/mixin chain. In addition, the linearization enforced by mixins/multiple inheritance implies that it's not possible for a composer to favor a method m1 from one mixin/class A and a method m2 from another mixin/class B: either all of A's methods take precedence, or all of B's methods take precedence.
+The big difference between traits and alternative composition techniques such as multiple inheritance and mixins is that upon trait composition, name conflicts (a.k.a. name clashes) should be explicitly resolved by the composer. This is in contrast to mixins and multiple inheritance, which define all kinds of linearization orderings that impose an implicit precedence on the composed entities, with one entity overriding the methods of another entity. While such systems often work for well in small reuse scenario's, they are not robust: small changes in the ordering of mixins/classes somewhere high up in the inheritance/mixin chain may impact the way name clashes are resolved further down the inheritance/mixin chain. In addition, the linearization imposed by mixins/multiple inheritance precludes a composer to favor a method m1 from one mixin/class A and a method m2 from another mixin/class B: either all of A's methods take precedence over B, or all of B's methods take precedence over A.
 
 Traits allow composers to resolve name clashes by means of 2 fundamental "composition operators":
   * *aliasing*: the composer may choose to import a method under a different (non-conflicting) name
   * *exclusion*: the composer may choose to explicitly exclude a name from the composition
 
-Trait composition is declarative in the sense that the ordering of the composed traits does not matter. In other words, unlike mixins/multiple inheritance, trait composition is commutative and associative. This tremendously reduces the burden of reasoning about deeply nested levels of trait composition.
+Name clashes that are never explicitly resolved will eventually lead to a composition error when traits are composed with a class. Depending on the language, this composition error may be a compiler error, a runtime error when the class is composed, or a runtime error when a conflicting name is invoked on a class instance.
+
+Trait composition is declarative in the sense that the ordering of the composed traits does not matter. In other words, unlike mixins/multiple inheritance, trait composition is commutative and associative. This tremendously reduces the cognitive burden of reasoning about deeply nested levels of trait composition.
 
 = Traits for Javascript =
 
@@ -63,11 +64,11 @@ var r = Range(0,5);
 r.inject(0,function(a,b){return a+b;}); // 10
 }}}
 
-The library does not explicitly distinguish traits from objects: any object can serve as a trait. Originally, traits were defines as stateless collections of methods. `traits.js` allows stateful traits and considers all own properties of a trait, regardless of whether they contain functions and regardless of whether they are data or accessor properties.
+`traits.js` does not explicitly distinguish traits from objects: any object can serve as a trait. Originally, traits were defines as stateless collections of methods. `traits.js` allows stateful traits and considers all own properties of a trait, regardless of whether they contain functions and regardless of whether they are data or accessor properties.
 
 If a trait depends on mutable state, one should always "instantiate" such traits via 'maker' functions, to prevent a stateful trait from being composed multiple times with different objects (this is possible, but state would then be shared between the two composers, which may result in very bad interactions).
 
-In `traits.js`, traits _provide_ a set of properties and may _require_ a set of properties, to be provided by other objects.
+In `traits.js`, required properties can be expressed as data properties bound to a distinguished singleton `required` object. The library recognizes such data properties as required properties. Traits are not required to state their required properties explicitly.
 
 Traits can be composed into 'composite' traits. The composite consists of all of the own properties of the composed traits. The lexical scope of composed methods remains unmodified. However, when a trait is composed into a composite, the binding of `this` within the trait's methods will refer to the composite object. Hence, if a trait `T` defines a method `m` that requires (depends on) the method `r`, `m` should call this method using `this.r(...)`.
 
