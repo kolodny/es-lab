@@ -23,6 +23,7 @@ Traits form a composition mechanism that is entirely orthogonal to prototype-del
 However, once all traits are composed into a composite that should be used as a 'finalized' or 'completed' object, that 'completed' object can itself take part in prototype-delegation like any other regular object. It may delegate to a parent object, and it may itself be delegated to by other objects.
 
 TODO:
+  * traits: summary, background, references
   * explain library API, four composition operators
   * explain `required` convention
   * diamond inheritance of methods
