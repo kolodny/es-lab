@@ -2,7 +2,7 @@
 
 = Introduction =
 
-The file [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/traits.js traits.js] provides an [http://www.ecma-international.org/publications/standards/Ecma-262.htm ES5] implementation of Traits as defined in [[#References 1]] but closer to the object-based, lexically nestable traits defined in: [[#References 2]]. The library has been successfully tested on Rhino (v1.7 release 3).
+The file [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/traits.js traits.js] provides an [http://www.ecma-international.org/publications/standards/Ecma-262.htm ES5] implementation of Traits as defined in [[#References 1]] but closer to the object-based, lexically nestable traits defined in [[#References 2]]. The library has been successfully tested on Rhino (v1.7 release 3).
 
 = Background: Traits =
 
@@ -29,17 +29,19 @@ var r = new Range(0,5);
 r.inject(0,function(a,b){return a+b;}); // 10
 }}}
 
-Traits are not meant to be instantiated or used directly. They are only used for reuse and composition. Traits can be recursively composed into larger, but possibly still incomplete, composite traits. Classes can be composed with traits. Classes, unlike traits, must be complete (or remain abstract classes). Traits cannot be composed by means of inheritance, but a class composed of one or more traits can also take part in inheritance. Methods provided by traits will override methods inherited from its superclass.
+Traits are not meant to be instantiated or used directly. They are only used to factor out and reusable sets of methods. Traits can be recursively composed into larger, but possibly still incomplete, traits. Classes can be composed with traits. Classes, unlike traits, must be complete (or remain abstract). Traits cannot be composed by means of inheritance, but a class composed of one or more traits can also take part in inheritance. Methods provided by traits then override methods inherited from its superclass. Traits and single inheritance are orthogonal and can coexist gracefully.
 
 The big difference between traits and alternative composition techniques such as multiple inheritance and mixins is that upon trait composition, name conflicts (a.k.a. name clashes) should be explicitly resolved by the composer. This is in contrast to mixins and multiple inheritance, which define all kinds of linearization orderings that impose an implicit precedence on the composed entities, with one entity overriding the methods of another entity. While such systems often work for well in small reuse scenario's, they are not robust: small changes in the ordering of mixins/classes somewhere high up in the inheritance/mixin chain may impact the way name clashes are resolved further down the inheritance/mixin chain. In addition, the linearization imposed by mixins/multiple inheritance precludes a composer to favor a method m1 from one mixin/class A and a method m2 from another mixin/class B: either all of A's methods take precedence over B, or all of B's methods take precedence over A.
 
 Traits allow composers to resolve name clashes by means of 2 fundamental "composition operators":
-  * *aliasing*: the composer may choose to import a method under a different (non-conflicting) name
-  * *exclusion*: the composer may choose to explicitly exclude a name from the composition
+  * *aliasing*: the composer may choose to import a method under a different (non-conflicting) name.
+  * *exclusion*: the composer may choose to explicitly exclude a name from the composition.
 
 Name clashes that are never explicitly resolved will eventually lead to a composition error when traits are composed with a class. Depending on the language, this composition error may be a compiler error, a runtime error when the class is composed, or a runtime error when a conflicting name is invoked on a class instance.
 
-Trait composition is declarative in the sense that the ordering of the composed traits does not matter. In other words, unlike mixins/multiple inheritance, trait composition is commutative and associative. This tremendously reduces the cognitive burden of reasoning about deeply nested levels of trait composition.
+Trait composition is declarative in the sense that the ordering of the composed traits does not matter. In other words, unlike mixins/multiple inheritance, trait composition is commutative and associative. This tremendously reduces the cognitive burden of reasoning about deeply nested levels of trait composition. In languages that support traits as a "compile-time" entity (similar to classes), trait composition can be entirely performed at compile-time, effectively "flattening" the composition and eliminating any composition overhead at runtime.
+
+Since their publication in 2003, traits have received widespread adoption in the PL community, although the details of the many traits implementations differ significantly from the original implementation defined for Smalltalk. Traits have been adopted in Perl 6, Fortress, Dr. Scheme OO, Slate, ... Scala supports 'traits', although these should have been called 'mixins' (no explicit conflict resolution). Traits are considered for inclusion in many more languages, including PHP [[#References 3]].
 
 = Traits for Javascript =
 
@@ -74,22 +76,29 @@ Traits can be composed into 'composite' traits. The composite consists of all of
 
 When two or more traits that define a property with the same name are composed, the composite property will be marked as a "conflict". Accessing a "conflict" property will raise an exception at runtime. 
 
-At composition time, the composer can avoid name clashes by means of two operations:
-  * either by *aliasing*, i.e. by renaming one of the conflicting properties in the composite
-  * or by *exclusion*, i.e. by excluding one the conflicting properties from the composite
+`traits.js` exports four "composition functions":
+  * `compose(trait1, trait2, ..., traitN) -> compositeTrait`
+  * `alias({ oldname: 'newname', ... }, trait) -> aliasedTrait`
+  * `exclude([ 'name', ... ], trait) -> excludedTrait`
+  * `object(trait, {extend: proto})` -> anObject`
+
+TODO: explain in more detail
 
 Traits form a composition mechanism that is entirely orthogonal to prototype-delegation (i.e. inheritance between objects). The 'parent' object of a trait is of no consequence: it is ignored during composition (composition of traits looks only at 'own' properties). Traits are assumed to be composed only via trait composition, not by means of delegation.
 
 However, once all traits are composed into a composite that should be used as a 'finalized' or 'completed' object, that 'completed' object can itself take part in prototype-delegation like any other regular object. It may delegate to a parent object, and it may itself be delegated to by other objects.
 
-TODO:
-  * traits: summary, background, references
-  * explain library API, four composition operators
-  * explain `required` convention
+== An Example ==
+
+TODO: explain the morph/animationtrait example.
+
+== Performance ==
+
+TODO: Performance overhead. Partial evaluation scheme that would enable a smart implementation to perform trait composition at 'load-time'.
+
+== TODO ==
   * diamond inheritance of methods
   * branding / testing 'type' of composed objects
-  * performance and partial evaluation
-  * show an example
   * compare with original traits (cf. Grafts proposal, compile-time vs run-time entities, state, computed exclude vs class precedence over traits)
 
 == References ==
