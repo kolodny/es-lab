@@ -72,6 +72,8 @@ r.inject(0,function(a,b){return a+b;}); // 10
 
 If a trait depends on mutable state, one should always "instantiate" such traits via 'maker' functions, to prevent a stateful trait from being composed multiple times with different objects (this is possible, but state would then be shared between the two composers, which may result in very bad interactions).
 
+Traits can be composed into 'composite' traits. The composite consists of all of the own properties of the composed traits. The lexical scope of composed methods remains unmodified. However, when a trait is composed into a composite, the binding of `this` within the trait's methods will refer to the composite object. Hence, if a trait `T` defines a method `m` that requires (depends on) the method `r`, `m` should call this method using `this.r(...)`.
+
 As mentioned in the background, trait composition is entirely orthogonal to inheritance. `traits.js` does not expect traits to take part in object-inheritance (i.e. prototype delegation). The 'prototype' of a trait is of no consequence: it is ignored during composition (composition of traits deals only with 'own' properties). Traits are assumed to be composed only via trait composition, not by means of delegation. However, once all traits are composed into a composite that should be used as a 'finalized' or 'completed' object, that 'completed' object _can_ take part in prototype-delegation like any regular Javascript object. It may delegate to a parent object, and it may itself be delegated to by other objects.
 
 ==== Composing traits ====
@@ -91,14 +93,20 @@ Finally, the function `object` transforms a trait into an object. While `traits.
   * freezes all of `self`'s methods (including their `.prototype`),
   * turns all of`self`'s methods into _bound_ methods whose `this` is guaranteed to refer to `self`,
   * allows `self` to inherit from (delegate to) a `proto` object,
-  * does not add `required` properties to `self` (see [Required_properties below]), and optionally throws an exception if it encounters such a property,
-  * optionally throws an exception if `trait` still contains "conflicting" properties (see [Conflicts below]).
+  * does not add `required` properties to `self` (see [#Required_properties below]), and optionally throws an exception if it encounters such a property,
+  * optionally throws an exception if `trait` still contains "conflicting" properties (see [#Conflicts below]).
 
 ==== Required properties ====
 
 In `traits.js`, required properties are defined as data properties bound to a distinguished singleton `required` object exported by the library. `traits.js` recognizes such data properties as required properties and they are treated specially by `object` (cf. previous section) and by `compose` (cf. the following section). Traits are not required to state their required properties explicitly.
 
-Traits can be composed into 'composite' traits. The composite consists of all of the own properties of the composed traits. The lexical scope of composed methods remains unmodified. However, when a trait is composed into a composite, the binding of `this` within the trait's methods will refer to the composite object. Hence, if a trait `T` defines a method `m` that requires (depends on) the method `r`, `m` should call this method using `this.r(...)`.
+The `object` function can enforce that the composite object is "complete" by throwing an exception if it encounters a lingering `required` property in its argument trait, by passing it the following option:
+
+{{{
+var o = object(trait, { failOnIncomplete: true });
+}}}
+
+By default, `object` silently filters out `required` properties of `trait`. The rationale is that missing `required` properties can always still be provided by a prototype object, or even a child object if `o`'s purpose is to serve as an "abstract prototype".
 
 ==== Conflicts ====
 
