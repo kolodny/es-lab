@@ -132,10 +132,17 @@ TODO: explain the morph/animationtrait example.
 
 TODO: Performance overhead. Partial evaluation scheme that would enable a smart implementation to perform trait composition at 'load-time'.
 
-== TODO ==
-  * diamond inheritance of methods
-  * branding / testing 'type' of composed objects
-  * compare with original traits (cf. Grafts proposal, compile-time vs run-time entities, state, computed exclude vs class precedence over traits)
+== Traits and type tests ==
+
+ TODO: branding / testing 'type' of composed objects
+
+{{{
+var o = object(trait, { implement: [ brand1, brand2, ... ] });
+}}}
+
+== traits.js vs original traits ==
+
+TODO: comparison table with original traits (cf. Grafts proposal, compile-time vs run-time entities, state, computed exclude vs class precedence over traits)
 
 == References ==
 
