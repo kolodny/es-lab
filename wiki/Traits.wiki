@@ -8,15 +8,15 @@ The library currently already works on Rhino (tested on v1.7 release 3).
 
 A trait can be any object. It can depend on mutable state, but it is advised to always expose such stateful traits via 'maker' functions, to prevent a stateful trait from being composed multiple times with different objects (this is possible, but state is then shared between the two composers, which may result in very bad interactions).
 
-In the general case, traits //provide// a set of properties and may //require// a set of properties, to be provided by other objects.
+In the general case, traits _provide_ a set of properties and may _require_ a set of properties, to be provided by other objects.
 
 Traits can be composed into 'composite' traits. The composite consists of all of the own properties of the composed traits. The lexical scope of composed methods remains unmodified. However, the binding of `this` within a trait's method does not necessarily refer to the object literal in which it was defined. When trait methods are composed into a composite, `this` will refer to the composite. Hence, if a trait `T` defines a method `m` that requires (depends on) the method `r`, `m` should call this method using `this.r(...)`.
 
 When two or more traits that define a property with the same name are composed, the composite property will be marked as a "conflict". Accessing a "conflict" property will raise an exception at runtime. 
 
 At composition time, the composer can avoid name clashes by means of two operations:
-  - either by *aliasing*, i.e. by renaming one of the conflicting properties in the composite
-  - or by *exclusion*, i.e. by excluding one the conflicting properties from the composite
+  * either by *aliasing*, i.e. by renaming one of the conflicting properties in the composite
+  * or by *exclusion*, i.e. by excluding one the conflicting properties from the composite
 
 Traits form a composition mechanism that is entirely orthogonal to prototype-delegation (i.e. inheritance between objects). The 'parent' object of a trait is of no consequence: it is ignored during composition (composition of traits looks only at 'own' properties). Traits are assumed to be composed only via trait composition, not by means of delegation.
 
