@@ -4,6 +4,8 @@
 
 The file [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/traits.js traits.js] provides an [http://www.ecma-international.org/publications/standards/Ecma-262.htm ES5] implementation of Traits as defined in [[#References 1]] but closer to the object-based, lexically nestable traits defined in [[#References 2]]. The library has been successfully tested on Rhino (v1.7 release 3).
 
+Note: this library is currently under active development and may still undergo some vigorous redesign. Don't rely on it just yet, but do feel free to experiment ;)
+
 = Background: Traits =
 
 Traits were originally defines as 'composable units of behavior' [[#References 1]]: reusable groups of methods that could be composed together to form a class. Their purpose is to encourage _reuse_ of methods across class hierarchies. Single-inheritance languages often suffer from methods being duplicated across hierarchies because single inheritance can only describe reuse trees, not graphs, often forcing programmers to violate the DRY principle.
