@@ -30,4 +30,4 @@ TODO:
   * branding / testing 'type' of composed objects
   * performance and partial evaluation
   * show an example
-  * compare with original traits (cf. Grafts proposal)
+  * compare with original traits (cf. Grafts proposal, compile-time vs run-time entities, state, computed exclude vs class precedence over traits)
