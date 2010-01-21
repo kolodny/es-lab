@@ -66,23 +66,41 @@ var r = Range(0,5);
 r.inject(0,function(a,b){return a+b;}); // 10
 }}}
 
+==== Traits vs Objects ====
+
 `traits.js` does not explicitly distinguish traits from objects: any object can serve as a trait. Originally, traits were defines as stateless collections of methods. `traits.js` allows stateful traits and considers all own properties of a trait, regardless of whether they contain functions and regardless of whether they are data or accessor properties.
 
 If a trait depends on mutable state, one should always "instantiate" such traits via 'maker' functions, to prevent a stateful trait from being composed multiple times with different objects (this is possible, but state would then be shared between the two composers, which may result in very bad interactions).
 
-In `traits.js`, required properties can be expressed as data properties bound to a distinguished singleton `required` object. The library recognizes such data properties as required properties. Traits are not required to state their required properties explicitly.
-
-Traits can be composed into 'composite' traits. The composite consists of all of the own properties of the composed traits. The lexical scope of composed methods remains unmodified. However, when a trait is composed into a composite, the binding of `this` within the trait's methods will refer to the composite object. Hence, if a trait `T` defines a method `m` that requires (depends on) the method `r`, `m` should call this method using `this.r(...)`.
-
-When two or more traits that define a property with the same name are composed, the composite property will be marked as a "conflict". Accessing a "conflict" property will raise an exception at runtime. 
+==== Composing traits ====
 
 `traits.js` exports four "composition functions":
   * `compose(trait1, trait2, ..., traitN) -> compositeTrait`
   * `alias({ oldname: 'newname', ... }, trait) -> aliasedTrait`
   * `exclude([ 'name', ... ], trait) -> excludedTrait`
-  * `object(trait, {extend: proto})` -> anObject`
+  * `object(trait, {extend: proto}) -> anObject`
 
-TODO: explain in more detail
+The function `compose` composes zero or more traits into a single composite trait. The composite trait contains all of the own properties of all of the argument traits (including non-enumerable properties). For properties that appear in multiple argument traits, a special "conflicting" property is defined in the composite trait (see [#Conflicts below]). `compose` is a commutative and associative operation: the ordering of its arguments does not matter, and `compose(t1,t2,t3)` is equivalent to, for example, `compose(t1,compose(t2,t3))` or `compose((compose(t2,t1),t3)`.
+
+The `alias` and `exclude` "operators" are defined as functions that transform a trait into a modified trait. `alias` takes as its first argument an object that serves as a map from old property names to new property names (the aliases). It returns a trait whose appropriate properties are renamed. `exclude` takes a list of property names and returns a trait without the properties named in the exclusion list.
+
+Finally, the function `object` transforms a trait into an object. While `traits.js` does not distinguish traits from objects as such, the `object` function is the equivalent of "creating a class composed of one or more traits". The `object` function creates and returns a new object (let's name it `self`) that has all of the own properties of the argument trait, but additionally:
+  * freezes `self`,
+  * freezes all of `self`'s methods (including their `.prototype`),
+  * turns all of`self`'s methods into _bound_ methods whose `this` is guaranteed to refer to `self`,
+  * allows `self` to inherit from (delegate to) a `proto` object,
+  * throws an exception if `trait` still contains `required` properties,
+  * optionally throws an exception if `trait` still contains "conflicting" properties.
+
+==== Required properties ====
+
+In `traits.js`, required properties can be expressed as data properties bound to a distinguished singleton `required` object. The library recognizes such data properties as required properties. Traits are not required to state their required properties explicitly.
+
+Traits can be composed into 'composite' traits. The composite consists of all of the own properties of the composed traits. The lexical scope of composed methods remains unmodified. However, when a trait is composed into a composite, the binding of `this` within the trait's methods will refer to the composite object. Hence, if a trait `T` defines a method `m` that requires (depends on) the method `r`, `m` should call this method using `this.r(...)`.
+
+==== Conflicts ====
+
+When two or more traits that define a property with the same name are composed, the composite property will be marked as a "conflict". Accessing a "conflict" property will raise an exception at runtime. 
 
 Traits form a composition mechanism that is entirely orthogonal to prototype-delegation (i.e. inheritance between objects). The 'parent' object of a trait is of no consequence: it is ignored during composition (composition of traits looks only at 'own' properties). Traits are assumed to be composed only via trait composition, not by means of delegation.
 
@@ -103,6 +121,6 @@ TODO: Performance overhead. Partial evaluation scheme that would enable a smart 
 
 == References ==
 
-  * [1] "Traits: Composable units of Behavior" (Scharli et. al, ECOOP 2003) ([http://scg.unibe.ch/archive/papers/Scha03aTraits.pdf paper])
-  * [2] "Adding State and Visibility Control to Traits using Lexical Nesting" (Van Cutsem et. al, ECOOP 2009) ([http://prog.vub.ac.be/Publications/2009/vub-prog-tr-09-04.pdf paper])
-  * [3] [http://www.stefan-marr.de/pages/request-for-comments-horizontal-reuse-for-php Horizontal Reuse for PHP]: 'traits' vs 'grafts'
+  * [[1]] "Traits: Composable units of Behavior" (Scharli et. al, ECOOP 2003) ([http://scg.unibe.ch/archive/papers/Scha03aTraits.pdf paper])
+  * [[2]] "Adding State and Visibility Control to Traits using Lexical Nesting" (Van Cutsem et. al, ECOOP 2009) ([http://prog.vub.ac.be/Publications/2009/vub-prog-tr-09-04.pdf paper])
+  * [[3]] [http://www.stefan-marr.de/pages/request-for-comments-horizontal-reuse-for-php Horizontal Reuse for PHP]: 'traits' vs 'grafts'
