@@ -2,9 +2,15 @@
 
 = Introduction =
 
-The file [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/traits.js traits.js] provides an ES5 implementation of Traits as defined in [[#References 1]] but closer to the object-based, lexically nestable traits defined in: [[#References 2]]
+The file [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/traits.js traits.js] provides an [http://www.ecma-international.org/publications/standards/Ecma-262.htm ES5] implementation of Traits as defined in [[#References 1]] but closer to the object-based, lexically nestable traits defined in: [[#References 2]]. The library has been successfully tested on Rhino (v1.7 release 3).
 
-The library currently already works on Rhino (tested on v1.7 release 3).
+= Background: Traits =
+
+Traits were originally defines as 'composable units of behavior' [[#References 1]]: reusable groups of methods that could be composed together to form a class. Traits may _provide_ and _require_ a number of methods. Required methods are like abstract methods in OO class hierarchies: their implementation should be provided by another trait or class.
+
+The big difference between traits and alternative composition techniques such as multiple inheritance and mixins is that upon trait composition, name conflicts (a.k.a. name clashes) should be explicitly resolved by the composer. This is in contrast to mixins and multiple inheritance, which define a certain linearization order that defines an implicit precedence between the composed entities, with one entity shadowing the methods of another entity. While such systems often work for well in small reuse scenario's, they are not robust: small changes in the way mixins/classes are ordered somewhere far away may impact the way name clashes are resolve further down the inheritance/mixin chain. In addition, the linearization enforced by mixins/multiple inheritance implies that it's not possible for a composer to favor a method m1 from one mixin/class A and a method m2 from another mixin/class B: either all of A's methods take precedence, or all of B's methods take precedence.
+
+= Traits for Javascript =
 
 A trait can be any object. It can depend on mutable state, but it is advised to always expose such stateful traits via 'maker' functions, to prevent a stateful trait from being composed multiple times with different objects (this is possible, but state is then shared between the two composers, which may result in very bad interactions).
 
@@ -34,6 +40,6 @@ TODO:
 
 == References ==
 
-  * [!1] "Traits: Composable units of Behavior" (Scharli et. al, ECOOP 2003) ([http://scg.unibe.ch/archive/papers/Scha03aTraits.pdf paper])
-  * [!2] "Adding State and Visibility Control to Traits using Lexical Nesting" (Van Cutsem et. al, ECOOP 2009) ([http://prog.vub.ac.be/Publications/2009/vub-prog-tr-09-04.pdf paper])
-  * [!3] [http://www.stefan-marr.de/pages/request-for-comments-horizontal-reuse-for-php Horizontal Reuse for PHP]: 'traits' vs 'grafts'
+  * [1] "Traits: Composable units of Behavior" (Scharli et. al, ECOOP 2003) ([http://scg.unibe.ch/archive/papers/Scha03aTraits.pdf paper])
+  * [2] "Adding State and Visibility Control to Traits using Lexical Nesting" (Van Cutsem et. al, ECOOP 2009) ([http://prog.vub.ac.be/Publications/2009/vub-prog-tr-09-04.pdf paper])
+  * [3] [http://www.stefan-marr.de/pages/request-for-comments-horizontal-reuse-for-php Horizontal Reuse for PHP]: 'traits' vs 'grafts'
