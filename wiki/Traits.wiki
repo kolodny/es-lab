@@ -15,6 +15,7 @@ trait Enumerable {
   provide {
     map: function(fun) { var r = []; this.each(function (e) { r.push(fun(e)); }); return r; },
     inject: function(init, accum) { var r = init; this.each(function (e) { r = accum(r,e); }); return r; },
+    ...
   }
   require {
     each: function(fun);
@@ -22,7 +23,7 @@ trait Enumerable {
 }
 
 class Range(from, to) uses Enumerable {
-  function each(fun) { for (var i = from; i < to; i++) { return fun(i) } }
+  function each(fun) { for (var i = from; i < to; i++) { return fun(i); } }
 }
 
 var r = new Range(0,5);
@@ -33,7 +34,7 @@ Traits are not meant to be instantiated or used directly. They are only used to 
 
 The big difference between traits and alternative composition techniques such as multiple inheritance and mixins is that upon trait composition, name conflicts (a.k.a. name clashes) should be explicitly resolved by the composer. This is in contrast to mixins and multiple inheritance, which define all kinds of linearization orderings that impose an implicit precedence on the composed entities, with one entity overriding the methods of another entity. While such systems often work for well in small reuse scenario's, they are not robust: small changes in the ordering of mixins/classes somewhere high up in the inheritance/mixin chain may impact the way name clashes are resolved further down the inheritance/mixin chain. In addition, the linearization imposed by mixins/multiple inheritance precludes a composer to favor a method m1 from one mixin/class A and a method m2 from another mixin/class B: either all of A's methods take precedence over B, or all of B's methods take precedence over A.
 
-Traits allow composers to resolve name clashes by means of 2 fundamental "composition operators":
+Traits allow composers to resolve name clashes by means of two "composition operators":
   * *aliasing*: the composer may choose to import a method under a different (non-conflicting) name.
   * *exclusion*: the composer may choose to explicitly exclude a name from the composition.
 
