@@ -72,15 +72,17 @@ r.inject(0,function(a,b){return a+b;}); // 10
 
 If a trait depends on mutable state, one should always "instantiate" such traits via 'maker' functions, to prevent a stateful trait from being composed multiple times with different objects (this is possible, but state would then be shared between the two composers, which may result in very bad interactions).
 
+As mentioned in the background, trait composition is entirely orthogonal to inheritance. `traits.js` does not expect traits to take part in object-inheritance (i.e. prototype delegation). The 'prototype' of a trait is of no consequence: it is ignored during composition (composition of traits deals only with 'own' properties). Traits are assumed to be composed only via trait composition, not by means of delegation. However, once all traits are composed into a composite that should be used as a 'finalized' or 'completed' object, that 'completed' object _can_ take part in prototype-delegation like any regular Javascript object. It may delegate to a parent object, and it may itself be delegated to by other objects.
+
 ==== Composing traits ====
 
 `traits.js` exports four "composition functions":
   * `compose(trait1, trait2, ..., traitN) -> compositeTrait`
   * `alias({ oldname: 'newname', ... }, trait) -> aliasedTrait`
   * `exclude([ 'name', ... ], trait) -> excludedTrait`
-  * `object(trait, {extend: proto}) -> anObject`
+  * `object(trait, { extend: proto }) -> anObject`
 
-The function `compose` composes zero or more traits into a single composite trait. The composite trait contains all of the own properties of all of the argument traits (including non-enumerable properties). For properties that appear in multiple argument traits, a special "conflicting" property is defined in the composite trait (see [#Conflicts below]). `compose` is a commutative and associative operation: the ordering of its arguments does not matter, and `compose(t1,t2,t3)` is equivalent to, for example, `compose(t1,compose(t2,t3))` or `compose((compose(t2,t1),t3)`.
+The function `compose` composes zero or more traits into a single composite trait. The composite trait contains all of the own properties of all of the argument traits (including non-enumerable properties). For properties that appear in multiple argument traits, a special "conflicting" property is defined in the composite trait (see [#Conflicts below]). `compose` is a commutative and associative operation: the ordering of its arguments does not matter, and `compose(t1,t2,t3)` is equivalent to, for example, `compose(t1,compose(t2,t3))` or `compose(compose(t2,t1),t3)`.
 
 The `alias` and `exclude` "operators" are defined as functions that transform a trait into a modified trait. `alias` takes as its first argument an object that serves as a map from old property names to new property names (the aliases). It returns a trait whose appropriate properties are renamed. `exclude` takes a list of property names and returns a trait without the properties named in the exclusion list.
 
@@ -89,26 +91,30 @@ Finally, the function `object` transforms a trait into an object. While `traits.
   * freezes all of `self`'s methods (including their `.prototype`),
   * turns all of`self`'s methods into _bound_ methods whose `this` is guaranteed to refer to `self`,
   * allows `self` to inherit from (delegate to) a `proto` object,
-  * throws an exception if `trait` still contains `required` properties (see [Required_properties below]),
+  * does not add `required` properties to `self` (see [Required_properties below]), and optionally throws an exception if it encounters such a property,
   * optionally throws an exception if `trait` still contains "conflicting" properties (see [Conflicts below]).
 
 ==== Required properties ====
 
-In `traits.js`, required properties can be expressed as data properties bound to a distinguished singleton `required` object. The library recognizes such data properties as required properties. Traits are not required to state their required properties explicitly.
+In `traits.js`, required properties are defined as data properties bound to a distinguished singleton `required` object exported by the library. `traits.js` recognizes such data properties as required properties and they are treated specially by `object` (cf. previous section) and by `compose` (cf. the following section). Traits are not required to state their required properties explicitly.
 
 Traits can be composed into 'composite' traits. The composite consists of all of the own properties of the composed traits. The lexical scope of composed methods remains unmodified. However, when a trait is composed into a composite, the binding of `this` within the trait's methods will refer to the composite object. Hence, if a trait `T` defines a method `m` that requires (depends on) the method `r`, `m` should call this method using `this.r(...)`.
 
 ==== Conflicts ====
 
-When two or more traits that define a property with the same name are composed, the composite property will be marked as a "conflict". Accessing a "conflict" property will raise an exception at runtime.
-
-Traits form a composition mechanism that is entirely orthogonal to prototype-delegation (i.e. inheritance between objects). The 'parent' object of a trait is of no consequence: it is ignored during composition (composition of traits looks only at 'own' properties). Traits are assumed to be composed only via trait composition, not by means of delegation.
-
-However, once all traits are composed into a composite that should be used as a 'finalized' or 'completed' object, that 'completed' object can itself take part in prototype-delegation like any other regular object. It may delegate to a parent object, and it may itself be delegated to by other objects.
+When `compose` encounters a property name that is defined by two or more argument traits, it marks the resulting property in the composite trait as a "conflicting property". Conflicting properties are accessor properties whose `get` and `set` methods raise an appropriate runtime exception upon use.
 
 Two properties `p1` and `p2` with the same name do *not* lead to a conflict if:
   * `p1` or `p2` is a [Required_properties required] property. If either `p1` or `p2` is a non-required property, the `required` property is overridden by the non-required property.
   * `p1` and `p2` denote the "same" property. Two properties are considered to be the same if they refer to the same values. This implies that it is OK for properties to be "inherited" via multiple composition paths (cf. diamond inheritance: `T1 = compose(T2,T3)` where `T2 = compose(T4,...)` and `T3 = compose(T4, ...)`.
+
+By default, `traits.js` allows conflicting properties to linger in even in finalized objects produced by `object`. However, this behavior can be changed by passing the following option to `object`:
+
+{{{
+var o = object(trait, { failOnConflicts: true });
+}}}
+
+Here, `o` is guaranteed not to contain conflicting properties. If `trait` does contain conflicts, the call to `object` will raise an exception.
 
 == An Example ==
 
