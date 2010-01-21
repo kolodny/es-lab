@@ -6,7 +6,26 @@ The file [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/traits.
 
 = Background: Traits =
 
-Traits were originally defines as 'composable units of behavior' [[#References 1]]: reusable groups of methods that could be composed together to form a class. Traits may _provide_ and _require_ a number of methods. Required methods are like abstract methods in OO class hierarchies: their implementation should be provided by another trait or class.
+Traits were originally defines as 'composable units of behavior' [[#References 1]]: reusable groups of methods that could be composed together to form a class. Traits may _provide_ and _require_ a number of methods. Required methods are like abstract methods in OO class hierarchies: their implementation should be provided by another trait or class. For example, "enumerability" of a collection object can be encoded as a trait providing all kinds of higher-order methods on collections based on a single method `each` that returns successive elements of the collection (cf. Ruby's [http://ruby-doc.org/core/classes/Enumerable.html Enumerable module]):
+
+{{{
+var EnumerableTrait = {
+  each: required, // should be provided by the composite
+  map: function(fun) { var r = []; this.each(function (e) { r.push(e); }); return r; },
+  inject: function(init, accum) { var r = init; this.each(function (e) { r = accum(r,e); }); return r; },
+  ...
+}
+
+function Range(from, to) {
+  return object(
+    compose(
+      { each: function(fun) { for (var i = from; i < to; i++) { fun(i) } },
+      EnumerableTrait));
+}
+
+var r = Range(0,5);
+r.inject(0,function(a,b){return a+b;}); // 10
+}}}
 
 The big difference between traits and alternative composition techniques such as multiple inheritance and mixins is that upon trait composition, name conflicts (a.k.a. name clashes) should be explicitly resolved by the composer. This is in contrast to mixins and multiple inheritance, which define a certain linearization order that defines an implicit precedence between the composed entities, with one entity shadowing the methods of another entity. While such systems often work for well in small reuse scenario's, they are not robust: small changes in the way mixins/classes are ordered somewhere far away may impact the way name clashes are resolve further down the inheritance/mixin chain. In addition, the linearization enforced by mixins/multiple inheritance implies that it's not possible for a composer to favor a method m1 from one mixin/class A and a method m2 from another mixin/class B: either all of A's methods take precedence, or all of B's methods take precedence.
 
