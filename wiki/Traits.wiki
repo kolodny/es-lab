@@ -147,6 +147,8 @@ var o = object(trait, { implement: [ brand1, brand2, ... ] });
 
 TODO: comparison table with original traits (cf. Grafts proposal, compile-time vs run-time entities, state, computed exclude vs class precedence over traits)
 
+TODO: modify discussion about inheritance. Stress that traits.js can completely replace all use of inheritance.
+
 == References ==
 
   * [[1]] "Traits: Composable units of Behavior" (Scharli et. al, ECOOP 2003) ([http://scg.unibe.ch/archive/papers/Scha03aTraits.pdf paper])
