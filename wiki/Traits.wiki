@@ -142,13 +142,15 @@ Here, `o` is guaranteed not to contain conflicting properties. If `trait` does c
 
 TODO: explain the [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/trait-example.js animationtrait example].
 
-== Performance ==
+== What about inheritance? ==
 
-TODO: Performance overhead.
+TODO: stress that traits.js can completely replace all use of inheritance.
+
+== Performance ==
 
 Because trait composition is essentially flattened out when a trait is instantiated into an object, the resulting object is essentially fully self-contained. It does not depend on a prototype object and as a result, method lookup is confined only to the object itself (except for methods inherited from `Object.prototype`). There is no inheritance chain to traverse.
 
-The downside of trait composition by flattening is that the resulting objects are "fatter" (the number of methods per object is larger). To reduce the memory footprint, an efficient implementation should share the property structure resulting from a trait instantiation between all objects instantiated from the same trait.
+The downside of trait composition by flattening is that the resulting objects are "fatter" (the number of methods per object is larger). To reduce the memory footprint, an efficient implementation should share the property structure resulting from a trait instantiation between all objects instantiated from the same trait. That is, it should be able to construct a single vtable to be shared by all objects returned from a single `object` callsite.
 
 While designing this library, great care has been taken to allow a Javascript engine to partially evaluate trait composition at "compile-time". In order for the partial evaluation scheme to work, programmers should use the library with some restrictions:
   * The argument to `trait` should be an object literal.
@@ -156,16 +158,17 @@ While designing this library, great care has been taken to allow a Javascript en
   * The first argument to `exclude` should be an array literal of string literals.
   * Arguments to all six composition functions should be either variables that are lexically bound to the result of a call to `trait` or one of the other functions, or they should be function calls whose function identifier is lexically bound to a function that is known to return a trait.
 
-While these restrictions seem severe at first sight, they... TODO complete
+At first sight, these restrictions may look severe. However, recall that traits should be thought of more as classes than as objects: they are meant to describe the structure of objects, and the above constraints are trivially satisfied if you use traits as the declarative entities they are meant to be. Now, the cool thing about `traits.js` is that it does not preclude programmers from violating these restrictions, enabling programmers to generate traits at runtime. These traits won't be able to make use of optimized trait composition and instantiation, but that's a fair tradeoff to be made. It's like generating a Java class at runtime.
 
-Partial evaluation would enable a smart implementation to perform trait composition at 'load-time', given that programmers use only object literals as the arguments to `trait` and object and string literals as the first argument to `exclude` and `override`:
+Partial evaluation would enable a smart implementation to transform the composition functions as follows:
 
 {{{
 trait({ a: 1, ... }) => compile-time-property-map
 compose(trait({ a: 1 }), trait({ b: 2})) => trait({ a:1, b:2 })
 alias({ a: 'x' , ... } , trait({ a: 1, b: 2, ... })) => trait({ x: 1, b:2, ... })
 exclude([ 'a' ], trait({ a: 1, b: 2, ...})) => trait({ b: 2, ... })
-object(compile-time-property-map) => freeze properties, Object.freeze({...})
+override({a: 1, b: 2}, { a: 3, b: 4, c: 5 }) => trait({ a: 1, b:2, c: 5})
+object(trait({...})) => freeze properties, Object.freeze({...})
 }}}
 
 == Traits and type tests ==
@@ -179,8 +182,6 @@ var o = object(trait, { implement: [ brand1, brand2, ... ] });
 == traits.js vs original traits ==
 
 TODO: comparison table with original traits (cf. Grafts proposal, compile-time vs run-time entities, state, computed exclude vs class precedence over traits)
-
-TODO: modify discussion about inheritance. Stress that traits.js can completely replace all use of inheritance.
 
 == References ==
 
