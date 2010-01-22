@@ -90,7 +90,7 @@ As mentioned in the background, trait composition is entirely orthogonal to inhe
   * `override(dominantT, recessiveT) -> overriddenTrait`
   * `object(trait, options) -> anObject`
 
-All of the above functions are pure: they never modify their argument values and they do not depend on mutable state across invocations.
+All of the above functions save `object` are pure: they never modify their argument values and they do not depend on mutable state across invocations. `object` additionally freezes the `.prototype` of the trait's methods (see below), but is pure if those prototypes are already frozen.
 
 The function `trait` allows one to define "simple" (non-composite) traits. It essentially turns an object record into a trait. Since only the provided object's own properties are considered, it is conventional to invoke `trait` only with object _literals_. The objects passed to `trait` should really only serve to describe a simple trait's properties, they typically shouldn't serve any other purpose. The `trait` function accepts an object only because we want to leverage the expressiveness of Javascript's excellent object literal syntax.
 
