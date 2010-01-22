@@ -90,15 +90,17 @@ As mentioned in the background, trait composition is entirely orthogonal to inhe
   * `override(dominantT, recessiveT) -> overriddenTrait`
   * `object(trait, options) -> anObject`
 
-The function `trait` turns an object record into a trait. Since only the provided object's own properties are considered, it is conventional to invoke `trait` only with object _literals_. The objects passed to `trait` should really only serve to describe a simple trait's properties, they typically shouldn't serve any other purpose.
+All of the above functions are pure: they never modify their argument values and they do not depend on mutable state across invocations.
 
-The function `compose` composes zero or more traits into a single composite trait. The composite trait contains all of the own properties of all of the argument traits (including non-enumerable properties). For properties that appear in multiple argument traits, a special "conflicting" property is defined in the composite trait (see [#Conflicts below]). `compose` is a commutative and associative operation: the ordering of its arguments does not matter, and `compose(t1,t2,t3)` is equivalent to, for example, `compose(t1,compose(t2,t3))` or `compose(compose(t2,t1),t3)`.
+The function `trait` allows one to define "simple" (non-composite) traits. It essentially turns an object record into a trait. Since only the provided object's own properties are considered, it is conventional to invoke `trait` only with object _literals_. The objects passed to `trait` should really only serve to describe a simple trait's properties, they typically shouldn't serve any other purpose. The `trait` function accepts an object only because we want to leverage the expressiveness of Javascript's excellent object literal syntax.
+
+The function `compose` is the workhorse of `traits.js`. It composes zero or more traits into a single composite trait. The composite trait contains all of the own properties of all of the argument traits (including non-enumerable properties). For properties that appear in multiple argument traits, a distinct "conflicting" property is defined in the composite trait (see [#Conflicts below]). `compose` is a commutative and associative operation: the ordering of its arguments does not matter, and `compose(t1,t2,t3)` is equivalent to, for example, `compose(t1,compose(t2,t3))` or `compose(compose(t2,t1),t3)`.
 
 The `alias` and `exclude` "operators" are defined as functions that transform a trait into a modified trait. `alias` takes as its first argument an object that serves as a map from old property names to new property names (the aliases). It returns a trait whose appropriate properties are renamed. `exclude` takes a list of property names and returns a trait without the properties named in the exclusion list.
 
 The `override` function takes two traits and returns a composite trait containing all properties of `dominantT` and all properties of `recessiveT` not in `dominantT`. `override` is obviously not commutative, but it is associative, i.e. `override(t1,override(t2,t3))` is equivalent to `override(override(t1,t2),t3)`. Composition via `override` most closely resembles the kind of composition provided by single inheritance.
 
-Finally, the function `object` transforms a trait into an object. It is the Javascript equivalent of "creating a class composed of one or more traits". The `object` function creates and returns a new object (let's name it `self`) that has all of the own properties of the argument trait, but additionally:
+Finally, the function `object` "instantiates" a trait into an object. It is the Javascript equivalent of "creating a class composed of one or more traits". The `object` function creates and returns a new object (let's name it `self`) that has all of the own properties of the argument trait, but additionally:
   * freezes `self`,
   * freezes all of `self`'s methods (including their `.prototype`),
   * turns all of`self`'s methods into _bound_ methods whose `this` is guaranteed to refer to `self`,
