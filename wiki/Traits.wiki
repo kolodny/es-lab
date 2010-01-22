@@ -140,11 +140,16 @@ TODO: explain the morph/animationtrait example.
 
 == Performance ==
 
-TODO: Performance overhead. Partial evaluation scheme that would enable a smart implementation to perform trait composition at 'load-time'.
+TODO: Performance overhead.
+
+Partial evaluation would enable a smart implementation to perform trait composition at 'load-time', given that programmers use only object literals as the arguments to `trait` and object and string literals as the first argument to `exclude` and `override`:
 
 {{{
-alias({ foo: 'bar' , ... } , { foo: 1, baz: 2, ... }) => trait({ bar: 1, baz:2, ... })
-exclude([ 'foo' ], { foo: 1, bar: 2, ...}) => trait({ bar: 2, ... })`
+trait({ a: 1, ... }) => compile-time-property-map
+compose(trait({ a: 1 }), trait({ b: 2})) => trait({ a:1, b:2 })
+alias({ a: 'x' , ... } , trait({ a: 1, b: 2, ... })) => trait({ x: 1, b:2, ... })
+exclude([ 'x' ], trait({ a: 1, b: 2, ...})) => trait({ b: 2, ... })
+object(compile-time-property-map) => freeze properties, Object.freeze({...})
 }}}
 
 == Traits and type tests ==
