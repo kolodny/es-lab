@@ -163,25 +163,29 @@ At first sight, these restrictions may look severe. However, recall that traits 
 Partial evaluation would enable a smart implementation to transform the composition functions as follows:
 
 {{{
-trait({ a: 1, ... }) => compile-time-property-map
+trait({ a: 1, ... }) => literal-property-map
 compose(trait({ a: 1 }), trait({ b: 2})) => trait({ a:1, b:2 })
 alias({ a: 'x' , ... } , trait({ a: 1, b: 2, ... })) => trait({ x: 1, b:2, ... })
 exclude([ 'a' ], trait({ a: 1, b: 2, ...})) => trait({ b: 2, ... })
-override({a: 1, b: 2}, { a: 3, b: 4, c: 5 }) => trait({ a: 1, b:2, c: 5})
-object(trait({...})) => freeze properties, Object.freeze({...})
+override(trait({a: 1, b: 2}), trait({ a: 3, b: 4, c: 5 })) => trait({ a: 1, b:2, c: 5})
+object(literal-property-map) => replace by a native implementation (objects generated from this call-site can share a custom vtable)
 }}}
+
+A `literal-property-map` is a property map defined as an object literal, with all of the required structural information available "at compile time". The key idea of the partial evaluation is that calls to `object` with a literal property map can be transformed into a fast native implementation of `object` whose instances can share structure.
 
 == Traits and type tests ==
 
- TODO: branding / testing 'type' of composed objects
+`traits.js` does not provide an operator to test whether an object was instantiated from a particular trait. In principle, traits are not meant to be used as a type/classification mechanism. This is better left to separate, orthogonal concepts such as interfaces.
+
+If Javascript would at some point have the notion of interfaces or "brands" to classify objects, the API of the `object` function could be extended to allow for objects to be "branded" as follows:
 
 {{{
-var o = object(trait, { implement: [ brand1, brand2, ... ] });
+var o = object(trait, { implements: [ brand1, brand2, ... ] });
 }}}
 
 == traits.js vs original traits ==
 
-TODO: comparison table with original traits (cf. Grafts proposal, compile-time vs run-time entities, state, computed exclude vs class precedence over traits)
+TODO: comparison table with original traits (cf. Grafts proposal, compile-time vs run-time entities, state, override vs class precedence over traits)
 
 == References ==
 
