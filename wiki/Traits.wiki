@@ -118,6 +118,8 @@ var o = object(trait, { failOnIncomplete: true });
 By default, `object` silently filters out any `required` properties left in `trait`.
 TODO: consider another default.
 
+The `alias` and `exclude` operators are neutral with respect to required properties: aliasing or excluding a required property has no effect.
+
 ==== Conflicts ====
 
 When `compose` encounters a property name that is defined by two or more argument traits, it marks the resulting property in the composite trait as a "conflicting property". Conflicting properties are accessor properties whose `get` and `set` methods raise an appropriate runtime exception upon use.
@@ -126,7 +128,7 @@ Two properties `p1` and `p2` with the same name do *not* lead to a conflict if:
   * `p1` or `p2` is a [#Required_properties required] property. If either `p1` or `p2` is a non-required property, the `required` property is overridden by the non-required property.
   * `p1` and `p2` denote the "same" property. Two properties are considered to be the same if they refer to the same values. This implies that it is OK for properties to be "inherited" via multiple composition paths (cf. diamond inheritance: `T1 = compose(T2,T3)` where `T2 = compose(T4,...)` and `T3 = compose(T4, ...)`.
 
-By default, `traits.js` allows conflicting properties to linger in even in finalized objects produced by `object`. However, this behavior can be changed by passing the following option to `object`:
+By default, `traits.js` allows conflicting properties to linger even in finalized objects produced by `object`. However, this behavior can be changed by passing the following option to `object`:
 
 {{{
 var o = object(trait, { failOnConflicts: true });
