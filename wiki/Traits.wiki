@@ -36,9 +36,10 @@ Traits are not meant to be instantiated or used directly. They are only used to 
 
 The big difference between traits and alternative composition techniques such as multiple inheritance and mixins is that upon trait composition, name conflicts (a.k.a. name clashes) should be explicitly resolved by the composer. This is in contrast to mixins and multiple inheritance, which define all kinds of linearization orderings that impose an implicit precedence on the composed entities, with one entity overriding the methods of another entity. While such systems often work for well in small reuse scenario's, they are not robust: small changes in the ordering of mixins/classes somewhere high up in the inheritance/mixin chain may impact the way name clashes are resolved further down the inheritance/mixin chain. In addition, the linearization imposed by mixins/multiple inheritance precludes a composer to favor a method m1 from one mixin/class A and a method m2 from another mixin/class B: either all of A's methods take precedence over B, or all of B's methods take precedence over A.
 
-Traits allow composers to resolve name clashes by means of two "composition operators":
+Traits allow composers to resolve name clashes by means of three "composition operators":
   * *aliasing*: the composer may choose to import a method under a different (non-conflicting) name.
   * *exclusion*: the composer may choose to explicitly exclude a name from the composition.
+  * *overriding*: the composer chooses to resolve name clashes by having one trait's definitions take precedence over the other.
 
 Name clashes that are never explicitly resolved will eventually lead to a composition error when traits are composed with a class. Depending on the language, this composition error may be a compiler error, a runtime error when the class is composed, or a runtime error when a conflicting name is invoked on a class instance.
 
@@ -51,17 +52,17 @@ Since their publication in 2003, traits have received widespread adoption in the
 The above `Enumerable` example can be encoded using `traits.js` as follows:
 
 {{{
-var EnumerableTrait = {
+var EnumerableTrait = trait({
   each: required, // should be provided by the composite
   map: function(fun) { var r = []; this.each(function (e) { r.push(fun(e)); }); return r; },
   inject: function(init, accum) { var r = init; this.each(function (e) { r = accum(r,e); }); return r; },
   ...
-}
+});
 
 function Range(from, to) {
   return object(
     compose(
-      { each: function(fun) { for (var i = from; i < to; i++) { return fun(i) } },
+      trait({ each: function(fun) { for (var i = from; i < to; i++) { return fun(i) } }),
       EnumerableTrait));
 }
 
@@ -86,19 +87,21 @@ As mentioned in the background, trait composition is entirely orthogonal to inhe
   * `compose(trait1, trait2, ..., traitN) -> compositeTrait`
   * `alias({ oldname: 'newname', ... }, trait) -> aliasedTrait`
   * `exclude([ 'name', ... ], trait) -> excludedTrait`
-  * `object(trait, { shadows: parenttrait }) -> anObject`
+  * `override(dominantT, recessiveT) -> overriddenTrait`
+  * `object(trait, options) -> anObject`
 
-The function `trait`
+The function `trait` turns an object record into a trait. Since only the provided object's own properties are considered, it is conventional to invoke `trait` only with object _literals_. The objects passed to `trait` should really only serve to describe a simple trait's properties, they typically shouldn't serve another purpose.
 
 The function `compose` composes zero or more traits into a single composite trait. The composite trait contains all of the own properties of all of the argument traits (including non-enumerable properties). For properties that appear in multiple argument traits, a special "conflicting" property is defined in the composite trait (see [#Conflicts below]). `compose` is a commutative and associative operation: the ordering of its arguments does not matter, and `compose(t1,t2,t3)` is equivalent to, for example, `compose(t1,compose(t2,t3))` or `compose(compose(t2,t1),t3)`.
 
 The `alias` and `exclude` "operators" are defined as functions that transform a trait into a modified trait. `alias` takes as its first argument an object that serves as a map from old property names to new property names (the aliases). It returns a trait whose appropriate properties are renamed. `exclude` takes a list of property names and returns a trait without the properties named in the exclusion list.
 
-Finally, the function `object` transforms a trait into an object. While `traits.js` does not distinguish traits from objects as such, the `object` function is the equivalent of "creating a class composed of one or more traits". The `object` function creates and returns a new object (let's name it `self`) that has all of the own properties of the argument trait, but additionally:
+The `override` function takes two traits and returns a composite trait containing all properties of `dominantT` and all properties of `recessiveT` not in `dominantT`. `override` is obviously not commutative, but it is associative, i.e. `override(t1,override(t2,t3))` is equivalent to `override(override(t1,t2),t3)`.
+
+Finally, the function `object` transforms a trait into an object. It is the Javascript equivalent of "creating a class composed of one or more traits". The `object` function creates and returns a new object (let's name it `self`) that has all of the own properties of the argument trait, but additionally:
   * freezes `self`,
   * freezes all of `self`'s methods (including their `.prototype`),
   * turns all of`self`'s methods into _bound_ methods whose `this` is guaranteed to refer to `self`,
-  * allows `self` to inherit from (delegate to) a `proto` object,
   * does not add `required` properties to `self` (see [#Required_properties below]), and optionally throws an exception if it encounters such a property,
   * optionally throws an exception if `trait` still contains "conflicting" properties (see [#Conflicts below]).
 
@@ -112,7 +115,8 @@ The `object` function can enforce that the composite object is "complete" by thr
 var o = object(trait, { failOnIncomplete: true });
 }}}
 
-By default, `object` silently filters out `required` properties of `trait`. The rationale is that missing `required` properties can always still be provided by a prototype object, or even a child object if `o`'s purpose is to serve as an "abstract prototype".
+By default, `object` silently filters out any `required` properties left in `trait`.
+TODO: consider another default.
 
 ==== Conflicts ====
 
@@ -138,8 +142,10 @@ TODO: explain the morph/animationtrait example.
 
 TODO: Performance overhead. Partial evaluation scheme that would enable a smart implementation to perform trait composition at 'load-time'.
 
-`alias({ foo: 'bar' , ... } , { foo: 1, baz: 2, ... }) => trait({ bar: 1, baz:2, ... })`
-`exclude([ 'foo' ], { foo: 1, bar: 2, ...}) => trait({ bar: 2, ... })`
+{{{
+alias({ foo: 'bar' , ... } , { foo: 1, baz: 2, ... }) => trait({ bar: 1, baz:2, ... })
+exclude([ 'foo' ], { foo: 1, bar: 2, ...}) => trait({ bar: 2, ... })`
+}}}
 
 == Traits and type tests ==
 
