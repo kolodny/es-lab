@@ -4,7 +4,7 @@
 
 The file [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/traits.js traits.js] provides a Javascript library for Trait composition, as originally proposed in [[#References 1]] but closer to the object-based, lexically nestable traits defined in [[#References 2]]. The library has been designed for [http://www.ecma-international.org/publications/standards/Ecma-262.htm Ecmascript 5], but should be backwards-compatible with existing Ecmascript 3 implementations. In fact, the ES5-specific extensions have already been tested on Rhino (v1.7 release 3) (which supports most of ES5 except strict-mode).
 
-Note: this library is currently under active development and may still undergo some vigorous redesign. Don't rely on it just yet, but do feel free to experiment with it!
+Note: this library is currently under active development and may still undergo some redesign. Don't rely on it just yet, but do feel free to experiment with it!
 
 = Background: Traits =
 
