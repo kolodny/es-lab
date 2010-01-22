@@ -138,6 +138,9 @@ TODO: explain the morph/animationtrait example.
 
 TODO: Performance overhead. Partial evaluation scheme that would enable a smart implementation to perform trait composition at 'load-time'.
 
+`alias({ foo: 'bar' , ... } , { foo: 1, baz: 2, ... }) => trait({ bar: 1, baz:2, ... })`
+`exclude([ 'foo' ], { foo: 1, bar: 2, ...}) => trait({ bar: 2, ... })`
+
 == Traits and type tests ==
 
  TODO: branding / testing 'type' of composed objects
