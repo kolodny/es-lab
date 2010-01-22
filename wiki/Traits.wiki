@@ -148,7 +148,7 @@ Partial evaluation would enable a smart implementation to perform trait composit
 trait({ a: 1, ... }) => compile-time-property-map
 compose(trait({ a: 1 }), trait({ b: 2})) => trait({ a:1, b:2 })
 alias({ a: 'x' , ... } , trait({ a: 1, b: 2, ... })) => trait({ x: 1, b:2, ... })
-exclude([ 'x' ], trait({ a: 1, b: 2, ...})) => trait({ b: 2, ... })
+exclude([ 'a' ], trait({ a: 1, b: 2, ...})) => trait({ b: 2, ... })
 object(compile-time-property-map) => freeze properties, Object.freeze({...})
 }}}
 
