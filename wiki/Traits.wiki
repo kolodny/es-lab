@@ -2,9 +2,9 @@
 
 = Introduction =
 
-The file [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/traits.js traits.js] provides an [http://www.ecma-international.org/publications/standards/Ecma-262.htm ES5] implementation of Traits as defined in [[#References 1]] but closer to the object-based, lexically nestable traits defined in [[#References 2]]. The library has been successfully tested on Rhino (v1.7 release 3).
+The file [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/traits.js traits.js] provides a Javascript library for Trait composition, as originally proposed in [[#References 1]] but closer to the object-based, lexically nestable traits defined in [[#References 2]]. The library has been designed for [http://www.ecma-international.org/publications/standards/Ecma-262.htm Ecmascript 5], but should be backwards-compatible with existing Ecmascript 3 implementations. In fact, the ES5-specific extensions have already been tested on Rhino (v1.7 release 3) (which supports most of ES5 except strict-mode).
 
-Note: this library is currently under active development and may still undergo some vigorous redesign. Don't rely on it just yet, but do feel free to experiment ;)
+Note: this library is currently under active development and may still undergo some vigorous redesign. Don't rely on it just yet, but do feel free to experiment with it!
 
 = Background: Traits =
 
@@ -32,7 +32,7 @@ var r = new Range(0,5);
 r.inject(0,function(a,b){return a+b;}); // 10
 }}}
 
-Traits are not meant to be instantiated or used directly. They are only used to factor out and reusable sets of methods. Traits can be recursively composed into larger, but possibly still incomplete, traits. Classes can be composed with traits. Classes, unlike traits, must be complete (or remain abstract). Traits cannot be composed by means of inheritance, but a class composed of one or more traits can also take part in inheritance. Methods provided by traits then override methods inherited from its superclass. Traits and single inheritance are orthogonal and can coexist gracefully.
+Traits are not meant to be instantiated or used directly. They are only used to factor out and reusable sets of methods. Traits can be recursively composed into larger, but possibly still incomplete, traits. Classes can be composed with traits. Classes, unlike traits, must be complete (or remain abstract). Traits cannot be composed by means of inheritance, but a class composed of one or more traits can take part in single inheritance. Methods provided by traits then override methods inherited from its superclass.
 
 The big difference between traits and alternative composition techniques such as multiple inheritance and mixins is that upon trait composition, name conflicts (a.k.a. name clashes) should be explicitly resolved by the composer. This is in contrast to mixins and multiple inheritance, which define all kinds of linearization orderings that impose an implicit precedence on the composed entities, with one entity overriding the methods of another entity. While such systems often work for well in small reuse scenario's, they are not robust: small changes in the ordering of mixins/classes somewhere high up in the inheritance/mixin chain may impact the way name clashes are resolved further down the inheritance/mixin chain. In addition, the linearization imposed by mixins/multiple inheritance precludes a composer to favor a method m1 from one mixin/class A and a method m2 from another mixin/class B: either all of A's methods take precedence over B, or all of B's methods take precedence over A.
 
@@ -71,9 +71,9 @@ r.inject(0,function(a,b){return a+b;}); // 10
 
 ==== Traits vs Objects ====
 
-`traits.js` does not explicitly distinguish traits from objects: any object can serve as a trait. Originally, traits were defines as stateless collections of methods. `traits.js` allows stateful traits and considers all own properties of a trait, regardless of whether they contain functions and regardless of whether they are data or accessor properties.
+`traits.js` explicitly distinguishes traits from objects. While any object can be turned into a trait, traits are regarded as separate entities since they are not meant to be used as objects. They are only meant to be composed _into_ objects. Traits are really records of properties. In fact, traits are represented by `traits.js` as property maps: objects whose keys represent property names and whose values are ES5 "property descriptors".
 
-If a trait depends on mutable state, one should always "instantiate" such traits via 'maker' functions, to prevent a stateful trait from being composed multiple times with different objects (this is possible, but state would then be shared between the two composers, which may result in very bad interactions).
+Originally, traits were defines as stateless collections of methods. `traits.js` allows stateful traits and allows traits to describe any Javascript property, regardless of whether it contains a function and regardless of whether it is a data or accessor property. If a trait property depends on mutable state, one should always "instantiate" such traits via 'maker' functions, to prevent a stateful trait from being composed multiple times with different objects (this is possible, but state would then be shared between the two composers, which may result in very bad interactions).
 
 Traits can be composed into 'composite' traits. The composite consists of all of the own properties of the composed traits. The lexical scope of composed methods remains unmodified. However, when a trait is composed into a composite, the binding of `this` within the trait's methods will refer to the composite object. Hence, if a trait `T` defines a method `m` that requires (depends on) the method `r`, `m` should call this method using `this.r(...)`.
 
@@ -81,11 +81,14 @@ As mentioned in the background, trait composition is entirely orthogonal to inhe
 
 ==== Composing traits ====
 
-`traits.js` exports four "composition functions":
+`traits.js` exports five "composition functions":
+  * `trait({ ... }) -> newTrait`
   * `compose(trait1, trait2, ..., traitN) -> compositeTrait`
   * `alias({ oldname: 'newname', ... }, trait) -> aliasedTrait`
   * `exclude([ 'name', ... ], trait) -> excludedTrait`
-  * `object(trait, { extend: proto }) -> anObject`
+  * `object(trait, { shadows: parenttrait }) -> anObject`
+
+The function `trait`
 
 The function `compose` composes zero or more traits into a single composite trait. The composite trait contains all of the own properties of all of the argument traits (including non-enumerable properties). For properties that appear in multiple argument traits, a special "conflicting" property is defined in the composite trait (see [#Conflicts below]). `compose` is a commutative and associative operation: the ordering of its arguments does not matter, and `compose(t1,t2,t3)` is equivalent to, for example, `compose(t1,compose(t2,t3))` or `compose(compose(t2,t1),t3)`.
 
