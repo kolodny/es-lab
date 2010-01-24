@@ -191,4 +191,4 @@ TODO: comparison table with original traits (cf. Grafts proposal, compile-time v
 
   * [[1]] "Traits: Composable units of Behavior" (Scharli et. al, ECOOP 2003) ([http://scg.unibe.ch/archive/papers/Scha03aTraits.pdf paper])
   * [[2]] "Adding State and Visibility Control to Traits using Lexical Nesting" (Van Cutsem et. al, ECOOP 2009) ([http://prog.vub.ac.be/Publications/2009/vub-prog-tr-09-04.pdf paper])
-  * [[3]] [http://www.stefan-marr.de/pages/request-for-comments-horizontal-reuse-for-php Horizontal Reuse for PHP]: 'traits' vs 'grafts'
+  * [[3]] [http://wiki.php.net/rfc/horizontalreuse Traits for PHP]
