@@ -187,6 +187,22 @@ var o = object(trait, { implements: [ brand1, brand2, ... ] });
 
 TODO: comparison table with original traits (cf. Grafts proposal, compile-time vs run-time entities, state, override vs class precedence over traits)
 
+== Open issues ==
+
+Dealing with private methods. Composer cannot change visibility of methods. However, one can still use lexical scoping to hide required methods:
+
+{{{
+function makeTrait(requiredFoo) {
+  trait({
+    m: function() { requiredFoo() }
+  })
+}
+
+var t1 = makeTraitProvidingFoo();
+var t2 = makeTrait(t1.foo);
+var o = build(compose(t1,t2))
+}}}
+
 == References ==
 
   * [[1]] "Traits: Composable units of Behavior" (Scharli et. al, ECOOP 2003) ([http://scg.unibe.ch/archive/papers/Scha03aTraits.pdf paper])
