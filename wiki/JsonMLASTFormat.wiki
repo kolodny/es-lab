@@ -94,6 +94,7 @@ Some tools process directives buried in comments. Most often, such directives ar
 
 === Visitor Protocol Summary ===
 
+Protocol of a [http://code.google.com/p/es-lab/source/browse/trunk/src/jsonMLWalkers.js visitor that walks these ASTs].
 Arguments named `opt*` in the first column below may refer to `[Empty]` AST nodes.
 Arguments suffixed with `?` in the first column below may be absent in the AST.
 
