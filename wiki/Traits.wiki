@@ -200,7 +200,7 @@ function makeTrait(requiredFoo) {
 
 var t1 = makeTraitProvidingFoo();
 var t2 = makeTrait(t1.foo);
-var o = build(compose(t1,t2))
+var o = build(compose(exclude(['foo'],t1),t2))
 }}}
 
 == References ==
