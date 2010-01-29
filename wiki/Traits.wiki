@@ -124,18 +124,17 @@ Finally, the function `eqv(t1,t2)` returns `true` if and only if t1 and t2 are e
 
 ==== Required properties ====
 
-In `traits.js`, required properties are defined as data properties bound to a distinguished singleton `required` object exported by the library. `traits.js` recognizes such data properties as required properties and they are treated specially by `object` (cf. previous section) and by `compose` (cf. the following section). Traits are not required to state their required properties explicitly.
+In `traits.js`, required properties are defined as data properties bound to a distinguished singleton `required` object exported by the library. `traits.js` recognizes such data properties as required properties and they are treated specially by `build` (cf. previous section) and by `compose` (cf. the following section). Traits are not required to state their required properties explicitly.
 
-The `object` function can enforce that the composite object is "complete" by throwing an exception if it encounters a lingering `required` property in its argument trait, by passing it the following option:
+The `build` function by default produces "complete" objects and enforces this by throwing an exception if it encounters a lingering `required` property in its argument trait. This check can be disabled by indicating to `build` that the constructed object is still "open":
 
 {{{
-var o = object(trait, { failOnIncomplete: true });
+var o = build(trait, { open: true });
 }}}
 
-By default, `object` silently filters out any `required` properties left in `trait`.
-TODO: consider another default.
+In this case, `build` silently filters out any `required` properties left in `trait`.
 
-The `alias` and `exclude` operators are neutral with respect to required properties: aliasing or excluding a required property has no effect.
+The `resolve` operator is neutral with respect to required properties: aliasing or excluding a required property has no effect.
 
 ==== Conflicts ====
 
@@ -145,57 +144,52 @@ Two properties `p1` and `p2` with the same name do *not* lead to a conflict if:
   * `p1` or `p2` is a [#Required_properties required] property. If either `p1` or `p2` is a non-required property, the `required` property is overridden by the non-required property.
   * `p1` and `p2` denote the "same" property. Two properties are considered to be the same if they refer to the same values. This implies that it is OK for properties to be "inherited" via multiple composition paths (cf. diamond inheritance: `T1 = compose(T2,T3)` where `T2 = compose(T4,...)` and `T3 = compose(T4, ...)`.
 
-By default, `traits.js` allows conflicting properties to linger even in finalized objects produced by `object`. However, this behavior can be changed by passing the following option to `object`:
+By default, `traits.js` does not allow conflicting properties to linger in objects produced by `build`. However, this behavior can be changed by passing the following option to `build`:
 
 {{{
-var o = object(trait, { failOnConflicts: true });
+var o = build(trait, { open: true });
 }}}
 
-Here, `o` is guaranteed not to contain conflicting properties. If `trait` does contain conflicts, the call to `object` will raise an exception.
+In this case, if `trait` does contain conflicts, those conflicting properties will be present in `o` and will trigger an exception when accessed.
 
 == An Example ==
 
 TODO: explain the [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/trait-example.js animationtrait example].
 
-== What about inheritance? ==
-
-TODO: stress that traits.js can completely replace all use of inheritance.
-
 == Performance ==
 
-Because trait composition is essentially flattened out when a trait is instantiated into an object, the resulting object is essentially fully self-contained. It does not depend on a prototype object and as a result, method lookup is confined only to the object itself (except for methods inherited from `Object.prototype`). There is no inheritance chain to traverse.
+Because trait composition is essentially flattened out when a trait is instantiated into an object, method lookup of trait methods is confined only to the constructed object itself. There is no inheritance chain to traverse in order to look up trait methods.
 
-The downside of trait composition by flattening is that the resulting objects are more "fat" (the number of methods per object is larger). To reduce the memory footprint, an efficient implementation should share the property structure resulting from a trait instantiation between all objects instantiated from the same `object` callsite. That is, it should be able to construct a single vtable to be shared by all objects returned from a single `object` callsite.
+The downside of trait composition by flattening is that the number of methods per object is larger. To reduce the memory footprint, an efficient implementation should share the property structure resulting from a trait instantiation between all objects instantiated from the same `build` callsite. That is, it should be able to construct a single vtable to be shared by all objects returned from a single `build` callsite.
 
 While designing this library, great care has been taken to allow a Javascript engine to partially evaluate trait composition at "compile-time". In order for the partial evaluation scheme to work, programmers should use the library with some restrictions:
   * The argument to `trait` should be an object literal.
-  * The first argument to `alias` should be an object literal whose properties are string literals.
-  * The first argument to `exclude` should be an array literal of string literals.
-  * Arguments to all six composition functions should be either variables that are lexically bound to the result of a call to `trait` or one of the other functions, or they should be function calls whose function identifier is lexically bound to a function that is known to return a trait.
+  * The first argument to `resolve` should be an object literal whose properties are either string literals or the literal `undefined`.
+  * The arguments to all composition functions should be statically resolvable to a trait.
 
-At first sight, these restrictions may look severe. However, recall that traits should be thought of more as classes than as objects: they are meant to describe the structure of objects, and the above constraints are trivially satisfied if you use traits as the declarative entities they are meant to be. Now, the cool thing about `traits.js` is that it does not preclude programmers from violating these restrictions, enabling programmers to generate traits at runtime. These traits won't be able to make use of optimized trait composition and instantiation, but that's a fair tradeoff to be made. It's like generating a Java class at runtime.
+At first sight, these restrictions may look severe. However, recall that traits should be thought of more as classes than as objects: they are meant to describe the structure of objects, and the above constraints are trivially satisfied if you use traits as the declarative entities they are meant to be. Now, the cool thing about `traits.js` is that it does not preclude programmers from violating these restrictions, enabling programmers to easily write generic trait composition code, traits generated at runtime, etc. These traits won't be able to make use of optimized trait composition and instantiation, but that's a fair tradeoff to be made. It's like generating a Java class at runtime.
 
 Partial evaluation would enable a smart implementation to transform the composition functions as follows:
 
 {{{
 trait({ a: 1, ... }) => literal-property-map
 compose(trait({ a: 1 }), trait({ b: 2})) => trait({ a:1, b:2 })
-alias({ a: 'x' , ... } , trait({ a: 1, b: 2, ... })) => trait({ x: 1, b:2, ... })
-exclude([ 'a' ], trait({ a: 1, b: 2, ...})) => trait({ b: 2, ... })
+resolve({ a: 'x' , ... } , trait({ a: 1, b: 2, ... })) => trait({ x: 1, b:2, ... })
+resolve({ a: undefined, ... }, trait({ a: 1, b: 2, ...})) => trait({ b: 2, ... })
 override(trait({a: 1, b: 2}), trait({ a: 3, b: 4, c: 5 })) => trait({ a: 1, b:2, c: 5})
-object(literal-property-map) => replace by a native implementation (objects generated from this call-site can share a custom vtable)
+build(literal-property-map) => replace by a native implementation (objects generated from this call-site can share a custom vtable)
 }}}
 
-A `literal-property-map` is a property map defined as an object literal, with all of the required structural information available "at compile time". The key idea of the partial evaluation is that calls to `object` with a literal property map can be transformed into a fast native implementation of `object` whose instances can share structure.
+A `literal-property-map` is a property map defined as an object literal, with all of the required structural information available "at compile time". The key idea of the partial evaluation is that calls to `build` with a literal property map can be transformed into a fast native implementation of `build` whose instances can share structure.
 
 == Traits and type tests ==
 
 `traits.js` does not provide an operator to test whether an object was instantiated from a particular trait. In principle, traits are not meant to be used as a type/classification mechanism. This is better left to separate, orthogonal concepts such as interfaces.
 
-If Javascript would at some point have the notion of interfaces or "brands" to classify objects, the API of the `object` function could be extended to allow for objects to be "branded" as follows:
+If Javascript would at some point have the notion of interfaces or "brands" to classify objects, the API of the `build` function could be extended to allow for objects to be "branded" as follows:
 
 {{{
-var o = object(trait, { implements: [ brand1, brand2, ... ] });
+var o = build(trait, { implements: [ brand1, brand2, ... ] });
 }}}
 
 == traits.js vs original traits ==
