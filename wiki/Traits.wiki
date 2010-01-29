@@ -60,7 +60,7 @@ var EnumerableTrait = trait({
 });
 
 function Range(from, to) {
-  return object(
+  return build(
     compose(
       trait({ each: function(fun) { for (var i = from; i < to; i++) { return fun(i) } }),
       EnumerableTrait));
