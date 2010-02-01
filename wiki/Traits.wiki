@@ -76,9 +76,27 @@ r.inject(0,function(a,b){return a+b;}); // 10
 
 Basic traits can be created from simple object descriptions (usually Javascript object literals) and further composed into 'composite' traits using a small set of composition functions (explained below). In order to use a (composite) trait, it must be "instantiated" into an object. When a trait is instantiated into an object `o`, the binding of the `this` pseudovariable within the trait's methods will refer to `o`. If a trait `T` defines a method `m` that requires (depends on) the method `r`, `m` should call this method using `this.r(...)`, and if that method was provided by some other trait, it will be found in the composite object `o`. The lexical scope of composed trait methods remains unaffected by trait composition.
 
-Originally, traits were defined as stateless collections of methods only. `traits.js` allows stateful traits and allows traits to describe any Javascript property, regardless of whether it contains a function and regardless of whether it is a data or accessor property. If a trait property depends on mutable state, one should always "instantiate" such traits via 'maker' functions, to prevent a stateful trait from being composed multiple times with different objects (this is possible, but state would then be shared between the two composers, which may result in bad interactions).
+Originally, traits were defined as stateless collections of methods only. `traits.js` allows stateful traits and allows traits to describe any Javascript property, regardless of whether it contains a function and regardless of whether it is a data or accessor property. If a trait property depends on mutable state, one should always "instantiate" such traits via 'maker' functions, to prevent a stateful trait from being composed multiple times with different objects:
 
-As mentioned in the background, trait composition is orthogonal to inheritance. `traits.js` does not expect traits to take part in object-inheritance (i.e. prototype delegation). Traits do not have a "prototype", but the objects they instantiate do, and may take part in object-inheritance. Traits themselves should be composed only via trait composition.
+{{{
+// don't do:
+var x = 5;
+var StatefulTrait = trait({
+  m: function() { return x; },
+  n: function(i) { x = i; }
+});
+// but rather:
+var makeStatefulTrait(x) {
+  return trait({
+    m: function() { return x },
+    n: function(i) { x = i; }
+  });
+}
+}}}
+
+In the case of `StatefulTrait`, if this trait is used to instantiate multiple objects, those objects will implicitly share the mutable variable `x`. In the case of `makeStatefulTrait`, that state can be made local to each trait instance if a new trait is created for each separate instantiation.
+
+As mentioned in the background, trait composition is orthogonal to inheritance. `traits.js` does not expect traits to take part in object-inheritance (i.e. prototype delegation) and should only be composed via trait composition. Traits do not have a "prototype", but the objects they instantiate do, and these objects may take part in object-inheritance.
 
 ==== Composing traits ====
 
