@@ -196,6 +196,43 @@ var o2 = build(makeStatefulTrait(5));
 
 TODO: explain the [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/trait-example.js animationtrait example].
 
+{{{
+function makeCircleTrait(radius) {
+  return Trait.trait({
+    move: function(dx, dy) {
+      return 'moved '+dx+','+dy;
+    }
+  });
+}
+}}}
+
+{{{
+function makeAnimationTrait(refreshRate) {
+  return Trait.trait({
+    animate: Trait.required, // to be provided by my composite
+    start: function() {
+      var that = this;
+      return setTimeout(function() { return that.animate(); }, refreshRate);
+    },
+    stop: function() { print('timer reset'); }
+  });
+}
+}}}
+
+{{{
+function makeParticleTrait(radius, moveRate, dx, dy) {
+   return Trait.compose(
+     Trait.trait({ animate: function() { return this.move(dx, dy); } }),
+     Trait.resolve({ start: 'startMoving', stop: undefined },
+                   makeAnimationTrait(moveRate)));
+}
+
+function makeParticleMorph(radius, moveRate, dx, dy) {
+   return Trait.build(Trait.override(makeParticleTrait(radius, moveRate, dx, dy),
+                      makeCircleTrait(radius)));
+}
+}}}
+
 == Performance ==
 
 Because trait composition is essentially flattened out when a trait is instantiated into an object, method lookup of trait methods is confined only to the constructed object itself. There is no inheritance chain to traverse in order to look up trait methods.
