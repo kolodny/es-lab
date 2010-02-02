@@ -80,13 +80,13 @@ As mentioned in the background, trait composition is orthogonal to inheritance. 
 
 ==== Composing traits ====
 
-`traits.js` exports six functions:
+The essential functions exported by `traits.js` are:
   * `trait({ ... }) -> trait`
   * `compose(trait1, trait2, ..., traitN) -> trait`
   * `resolve({ name: 'alias', nameToExclude: undefined, ... }, trait) -> trait`
   * `override(trait1, trait2, ... , traitN) -> trait`
-  * `build(trait, options) -> object`
   * `eqv(trait1, trait2) -> boolean`
+  * `build(trait, options) -> object`
 
 All of the above functions except `trait` are pure: they never modify their argument values and they do not depend on mutable state across invocations.
 
@@ -94,8 +94,8 @@ The function `trait` allows one to define "atomic" (non-composite) traits. It es
 
 The `trait` function puts the following constraints on its "object record" argument to clearly indicate that it is not meant to be applied to arbitrary, existing objects:
   * The object record must have `Object.prototype` as its prototype. Only the object record's own properties are turned into trait properties.
-  * Data properties bound to the special `required` singleton exported by `traits.js` are interpreted as "required" properties (see below).
-  * Data properties bound to functions are interpreted as trait "methods". `trait` will freeze the `.prototype` property of such methods. If the trait is ever instantiated as a "closed" object using `build(trait,{open:false})` (see below), the `this` binding within a method is guaranteed to refer to the instantiated composite object.
+  * Data properties in the object record bound to the special `required` singleton exported by `traits.js` are interpreted as "required" properties (see below).
+  * Data properties in the object record bound to functions are interpreted as trait "methods". `trait` will freeze the `.prototype` property of such methods. If the trait is ever instantiated as a "closed" object using `build(trait,{open:false})` (see below), the `this` binding within a method is guaranteed to refer to the instantiated composite object.
   * `trait` is pure if no other code has a reference to any of the object record's methods. If `trait` is applied to an object literal whose methods are represented as anonymous in-place functions as recommended, this should be the case.
 
 The function `compose` is the workhorse of `traits.js`. It composes zero or more traits into a single composite trait. The composite trait contains all of the own properties of all of the argument traits (including non-enumerable properties). For properties that appear in multiple argument traits, a distinct "conflicting" property is defined in the composite trait (see [#Conflicts below]). `compose` is a commutative and associative operation: the ordering of its arguments does not matter, and `compose(t1,t2,t3)` is equivalent to, for example, `compose(t1,compose(t2,t3))` or `compose(compose(t2,t1),t3)`.
@@ -104,27 +104,29 @@ The `resolve` "operator" can be used to resolve conflicts created by `compose`. 
 
 The `override` function takes any number of traits and returns a composite trait containing all properties of its argument traits. In contrast to `compose`, the `override` function does not generate conflicts upon name clashes, but rather overrides the conflicting property with that of a trait with higher precedence. Trait precedence is from left to right, i.e. the properties of the first argument to `override` are never overridden. `override` is obviously not commutative, but it is associative, i.e. `override(t1,t2,t3)` is equivalent to `override(t1,override(t2,t3))` or to `override(override(t1,t2),t3)`. Composition via `override` most closely resembles the kind of composition provided by single-inheritance subclassing.
 
-The function `build` "instantiates" a trait into an object. It is the`traits.js` equivalent of "creating a class composed of one or more traits". The `build` function creates and returns a new object `o` that has all of the properties described by the argument trait. `build` accepts an optional `options` argument that can be used to further describe the properties of the generated object:
+Finally, the function `eqv(t1,t2)` returns `true` if and only if t1 and t2 are equivalent. Two traits are equivalent if they describe the same set of property names, and the property descriptors bound to these names have identical attributes.
+
+===== Instantiating Traits =====
+
+The function `build` instantiates a trait into an object. It is the`traits.js` equivalent of "creating a class composed of one or more traits". The `build` function creates and returns a new object `o` that has all of the properties described by the argument trait. `build` accepts an optional `options` argument that can be used to further describe the properties of the generated object:
 
 The first option is `extend`:
 
 `build(trait, { extend: proto })` instantiates an object `o` that inherits from `proto`. If no prototype is specified, `o` inherits from `Object.prototype`.
 
-The second option is `open`: the value of `open` is a boolean indicating whether this object should be considered 'open' or 'closed' (the default is closed):
+The second option is `open`: the value of `open` is a boolean indicating whether the instantiated object should be considered 'open' or 'closed' (the default is closed):
 
-`build(trait, { open: false })` indicates that the generated object is "final" and should be complete:
+`build(trait, { open: false })` instantiates an object that is "final" and should be complete:
   * an exception is thrown if 'trait' still contains [#Required_properties required properties].
   * an exception is thrown if 'trait' still contains [#Conflicts conflicting properties].
-  * the object and all of its accessor and method properties are frozen.
-  * the `this` pseudovariable in all accessors and methods of the object is bound to the composed object.
+  * the instantiated object and all of its accessor and method properties are frozen.
+  * the `this` pseudovariable in all accessors and methods of the object is bound to the instantiated object.
 
-`build(trait, {open: true})` indicates that the generated object is "abstract" or otherwise incomplete:
+`build(trait, {open: true})` instantiates an object that is "abstract" or otherwise incomplete:
   * Any remaining [#Required_properties required properties] are simply ignored (no exception is thrown).
-  * Any remaining [#Conflicts conflicting properties] are added to the composite (no exception is thrown by `build`, but accessing any of these properties on the composite will still throw an exception).
-  * neither the object nor its accessor and method properties are frozen.
-  * the `this` pseudovariable in all accessors and methods of the object is left unbound.
-
-Finally, the function `eqv(t1,t2)` returns `true` if and only if t1 and t2 are equivalent. Two traits are equivalent if they describe the same set of property names, and the property descriptors bound to these names have identical attributes.
+  * Any remaining [#Conflicts conflicting properties] are added to the instantiated object (no exception is thrown by `build`, but accessing any of these properties on the object will still throw an exception).
+  * neither the instantiated object nor its accessor and method properties are frozen.
+  * the `this` pseudovariable in all accessors and methods of the instantiated object is left unbound.
 
 ==== Required properties ====
 
