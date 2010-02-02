@@ -252,7 +252,7 @@ function makeParticleTrait(radius, moveRate, dx, dy) {
    return Trait.compose(
      Trait.trait({ animate: function() { return this.move(dx, dy); } }),
      Trait.resolve({ start: 'startMoving', stop: undefined },
-                          makeAnimationTrait(moveRate)));
+                   makeAnimationTrait(moveRate)));
 }
 }}}
 
@@ -261,11 +261,11 @@ Finally, let's create a concrete object from these abstractions:
 {{{
 function makeParticleMorph(radius, moveRate, dx, dy) {
    return Trait.create(makeCircleTrait(radius),
-                                 makeParticleTrait(radius, moveRate, dx, dy));
+                       makeParticleTrait(radius, moveRate, dx, dy));
 }
 }}}
 
-An object `m` returned by a call to `makeParticleMorph` will inherit from the "circle" object and have the following API:
+An object `m` returned by a call to `makeParticleMorph(...)` will inherit from the "circle" object and have the following API:
 {{{
 {
   startMoving: function() { ... this.animate() ... },
