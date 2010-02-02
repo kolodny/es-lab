@@ -76,26 +76,6 @@ r.inject(0,function(a,b){return a+b;}); // 10
 
 Basic traits can be created from simple object descriptions (usually Javascript object literals) and further composed into 'composite' traits using a small set of composition functions (explained below). In order to use a (composite) trait, it must be "instantiated" into an object. When a trait is instantiated into an object `o`, the binding of the `this` pseudovariable within the trait's methods will refer to `o`. If a trait `T` defines a method `m` that requires (depends on) the method `r`, `m` should call this method using `this.r(...)`, and if that method was provided by some other trait, it will be found in the composite object `o`. The lexical scope of composed trait methods remains unaffected by trait composition.
 
-Originally, traits were defined as stateless collections of methods only. `traits.js` allows stateful traits and allows traits to describe any Javascript property, regardless of whether it contains a function and regardless of whether it is a data or accessor property. If a trait property depends on mutable state, one should always "instantiate" such traits via 'maker' functions, to prevent a stateful trait from being composed multiple times with different objects:
-
-{{{
-// don't do:
-var x = 5;
-var StatefulTrait = trait({
-  m: function() { return x; },
-  n: function(i) { x = i; }
-});
-// but rather:
-var makeStatefulTrait(x) {
-  return trait({
-    m: function() { return x },
-    n: function(i) { x = i; }
-  });
-}
-}}}
-
-In the case of `StatefulTrait`, if this trait is used to instantiate multiple objects, those objects will implicitly share the mutable variable `x`. In the case of `makeStatefulTrait`, that state can be made local to each trait instance if a new trait is created for each separate instantiation.
-
 As mentioned in the background, trait composition is orthogonal to inheritance. `traits.js` does not expect traits to take part in object-inheritance (i.e. prototype delegation) and should only be composed via trait composition. Traits do not have a "prototype", but the objects they instantiate do, and these objects may take part in object-inheritance.
 
 ==== Composing traits ====
@@ -108,9 +88,15 @@ As mentioned in the background, trait composition is orthogonal to inheritance. 
   * `build(trait, options) -> object`
   * `eqv(trait1, trait2) -> boolean`
 
-All of the above functions save `build` are pure: they never modify their argument values and they do not depend on mutable state across invocations. The purity of `build` depends on its `options` argument (see below).
+All of the above functions except `trait` are pure: they never modify their argument values and they do not depend on mutable state across invocations.
 
-The function `trait` allows one to define "atomic" (non-composite) traits. It essentially turns a record of properties into a trait. The argument object to `trait` must have `Object.prototype` as its prototype. This constraint is put in place because only the object's own properties are turned into trait properties. The objects passed to `trait` should really only serve to describe a simple trait's properties, they typically shouldn't serve any other purpose (so they shouldn't be part of an inheritance chain). The `trait` function accepts an object only because we want to leverage the expressiveness of Javascript's excellent object literal syntax. The convention is to invoke `trait` only with an object literal argument.
+The function `trait` allows one to define "atomic" (non-composite) traits. It essentially turns a record of properties into a trait. The objects passed to `trait` should really only serve as plain records that describe a simple trait's properties, they typically shouldn't serve any other purpose (they shouldn't be part of an inheritance chain, for example). The `trait` function accepts an object only because we want to leverage the expressiveness of Javascript's excellent object literal syntax. The convention is to invoke `trait` only with an object literal argument.
+
+The `trait` function puts the following constraints on its "object record" argument to clearly indicate that it is not meant to be applied to arbitrary, existing objects:
+  * The object record must have `Object.prototype` as its prototype. Only the object record's own properties are turned into trait properties.
+  * Data properties bound to the special `required` singleton exported by `traits.js` are interpreted as "required" properties (see below).
+  * Data properties bound to functions are interpreted as trait "methods". `trait` will freeze the `.prototype` property of such methods. If the trait is ever instantiated as a "closed" object using `build(trait,{open:false})` (see below), the `this` binding within a method is guaranteed to refer to the instantiated composite object.
+  * `trait` is pure if no other code has a reference to any of the object record's methods. If `trait` is applied to an object literal whose methods are represented as anonymous in-place functions as recommended, this should be the case.
 
 The function `compose` is the workhorse of `traits.js`. It composes zero or more traits into a single composite trait. The composite trait contains all of the own properties of all of the argument traits (including non-enumerable properties). For properties that appear in multiple argument traits, a distinct "conflicting" property is defined in the composite trait (see [#Conflicts below]). `compose` is a commutative and associative operation: the ordering of its arguments does not matter, and `compose(t1,t2,t3)` is equivalent to, for example, `compose(t1,compose(t2,t3))` or `compose(compose(t2,t1),t3)`.
 
@@ -129,16 +115,14 @@ The second option is `open`: the value of `open` is a boolean indicating whether
 `build(trait, { open: false })` indicates that the generated object is "final" and should be complete:
   * an exception is thrown if 'trait' still contains [#Required_properties required properties].
   * an exception is thrown if 'trait' still contains [#Conflicts conflicting properties].
-  * the object and all of its accessor and method properties are frozen, including the `.prototype` properties of methods and accessors.
+  * the object and all of its accessor and method properties are frozen.
   * the `this` pseudovariable in all accessors and methods of the object is bound to the composed object.
 
 `build(trait, {open: true})` indicates that the generated object is "abstract" or otherwise incomplete:
   * no exception is thrown if 'trait' still contains [#Required_properties required properties] (the properties are simply dropped from the composite object)
   * no exception is thrown if 'trait' still contains [#Conflicts conflicting properties] (these properties remain as conflicting properties in the composite object)
-  * neither the object nor its accessor and method properties are frozen
-  * the 'this' pseudovariable in all accessors and methods of the object is left unbound.
-
-The behavior of `build(trait, { open: true })` is pure. The behavior of `build(trait, { open: false })` is impure because `build` will freeze all trait methods' `.prototype` property, thus affecting external state.
+  * neither the object nor its accessor and method properties are frozen.
+  * the `this` pseudovariable in all accessors and methods of the object is left unbound.
 
 Finally, the function `eqv(t1,t2)` returns `true` if and only if t1 and t2 are equivalent. Two traits are equivalent if they describe the same set of property names, and the property descriptors bound to these names have identical attributes.
 
@@ -171,6 +155,40 @@ var o = build(trait, { open: true });
 }}}
 
 In this case, if `trait` does contain conflicts, those conflicting properties will be present in `o` and will trigger an exception when accessed.
+
+==== Stateful traits ====
+
+Traits were originally defined as stateless collections of methods only. `traits.js` allows stateful traits and allows traits to describe any Javascript property, regardless of whether it contains a function and regardless of whether it is a data or accessor property. If a trait property depends on mutable state, one should always "instantiate" such traits via 'maker' functions, to prevent a stateful trait from being composed multiple times with different objects:
+
+{{{
+// don't do:
+var x = 5;
+var StatefulTrait = trait({
+  m: function() { return x; },
+  n: function(i) { x = i; }
+});
+// but rather:
+var makeStatefulTrait(x) {
+  return trait({
+    m: function() { return x },
+    n: function(i) { x = i; }
+  });
+}
+}}}
+
+In the case of `StatefulTrait`, if this trait is used to instantiate multiple objects, those objects will implicitly share the mutable variable `x`:
+{{{
+// bad: invoking o1.n(0) will cause o2.m() to return '0', implicit shared state
+var o1 = build(StatefulTrait);
+var o2 = build(StatefulTrait);
+}}}
+
+In the case of `makeStatefulTrait`, that state can be made local to each trait instance if a new trait is created for each separate instantiation:
+{{{
+// good: invoking o1.n(0) will not affect the result of o2.m()
+var o1 = build(makeStatefulTrait(5));
+var o2 = build(makeStatefulTrait(5));
+}}}
 
 == An Example ==
 
