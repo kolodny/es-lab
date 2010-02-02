@@ -24,7 +24,7 @@ trait Enumerable {
   }
 }
 
-class Range(from, to) uses Enumerable {
+class Range(from, to) extends Object uses Enumerable {
   function each(fun) { for (var i = from; i < to; i++) { return fun(i); } }
 }
 
