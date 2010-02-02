@@ -106,7 +106,7 @@ The `override` function takes any number of traits and returns a composite trait
 
 Finally, the function `eqv(t1,t2)` returns `true` if and only if t1 and t2 are equivalent. Two traits are equivalent if they describe the same set of property names, and the property descriptors bound to these names have identical attributes.
 
-===== Instantiating Traits =====
+==== Instantiating Traits ====
 
 The function `build` instantiates a trait into an object. It is the`traits.js` equivalent of "creating a class composed of one or more traits". The `build` function creates and returns a new object `o` that has all of the properties described by the argument trait. `build` accepts an optional `options` argument that can be used to further describe the properties of the generated object:
 
@@ -231,10 +231,6 @@ If Javascript would at some point have the notion of interfaces or "brands" to c
 {{{
 var o = build(trait, { implements: [ brand1, brand2, ... ] });
 }}}
-
-== traits.js vs original traits ==
-
-TODO: comparison table with original traits (cf. Grafts proposal, compile-time vs run-time entities, state, override vs class precedence over traits)
 
 == Open issues ==
 
