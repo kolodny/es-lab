@@ -92,7 +92,7 @@ All of the above functions except `trait` are pure: they never modify their argu
 
 The function `trait` allows one to define "atomic" (non-composite) traits. It essentially turns a record of properties into a trait. The objects passed to `trait` should really only serve as plain records that describe a simple trait's properties, they typically shouldn't serve any other purpose (they shouldn't be part of an inheritance chain, for example). The `trait` function accepts an object only because we want to leverage the expressiveness of Javascript's excellent object literal syntax. The convention is to invoke `trait` only with an object literal argument.
 
-The `trait` function puts the following constraints on its "object record" argument to clearly indicate that it is not meant to be applied to arbitrary, existing objects:
+The `trait` function puts the following constraints on its "object record" argument to clearly indicate that it is not meant to be applied to arbitrary objects:
   * The object record must have `Object.prototype` as its prototype. Only the object record's own properties are turned into trait properties.
   * Data properties in the object record bound to the special `required` singleton exported by `traits.js` are interpreted as "required" properties (see below).
   * Data properties in the object record bound to functions are interpreted as trait "methods". `trait` will freeze the `.prototype` property of such methods. If the trait is ever instantiated as a "closed" object using `create(proto,trait,{open:false})` (see below), the `this` binding within a method is guaranteed to refer to the instantiated composite object.
@@ -190,47 +190,90 @@ var o2 = create(Object.prototype, makeStatefulTrait(5));
 
 == An Example ==
 
-TODO: explain the [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/trait-example.js animationtrait example].
+The following [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/trait-example.js animationtrait example] is a direct translation of the same example from [[#References 2]].
+
+First, define a simple "circle" object that is parameterized with a circle radius:
 
 {{{
-function makeCircleTrait(radius) {
-  return Trait.trait({
+function makeCircle(radius) {
+  return {
     move: function(dx, dy) {
       return 'moved '+dx+','+dy;
     }
-  });
+  };
 }
 }}}
 
+This circle object will serve as the prototype of an object that we will instantiate from a trait, below. Next, we define our first trait, in this case a simple, non-composite trait that captures the trait of an object to be "animatable":
+
 {{{
 function makeAnimationTrait(refreshRate) {
+  function animateLoop(trait) {
+    setTimeout(function() {
+      trait.animate();
+      animateLoop(trait);
+    }, refreshRate)
+  };
+
   return Trait.trait({
-    animate: Trait.required, // to be provided by my composite
-    start: function() {
-      var that = this;
-      return setTimeout(function() { return that.animate(); }, refreshRate);
-    },
+    animate: Trait.required,
+    start: function() { animateLoop(this); },
     stop: function() { print('timer reset'); }
   });
 }
 }}}
+
+First, note that this is a stateful trait, so we make sure to wrap the trait into a 'maker' function that parameterizes the state. Second, the trait _provides_ the methods `start` and `stop` and _requires_ the method `animate`. The `trait` function converts the object literal into the following property descriptor map representing the trait:
+
+{{{
+{ 'animate' : {
+    value: Trait.required,
+    required: true,
+    enumerable: true
+  },
+  'start' : {
+    value: function() { ... } // Note: value.prototype is frozen
+    method: true,
+    enumerable: true
+  },
+  'stop' : {
+    value: function() { ... } // Note: value.prototype is frozen
+    method: true,
+    enumerable: true
+  }
+}
+}}}
+
+The attributes `required` and `method` are non-standard, but have a special interpretation in the `traits.js` library.
+Next, we will define a "particle trait", which is an "animatable" object that defines a method called `move`. We define the particle trait as a composite trait. For the sake of demonstrating conflict resolution, say we don't want particles to stop animating, and we want the "start" method to be named "startMoving" instead:
 
 {{{
 function makeParticleTrait(radius, moveRate, dx, dy) {
    return Trait.compose(
      Trait.trait({ animate: function() { return this.move(dx, dy); } }),
      Trait.resolve({ start: 'startMoving', stop: undefined },
-                   makeAnimationTrait(moveRate)));
+                          makeAnimationTrait(moveRate)));
 }
 }}}
 
+Finally, let's create a concrete object from these abstractions:
+
 {{{
 function makeParticleMorph(radius, moveRate, dx, dy) {
-   return Trait.create(Object.prototype,
-     Trait.override(makeParticleTrait(radius, moveRate, dx, dy),
-                           makeCircleTrait(radius)));
+   return Trait.create(makeCircleTrait(radius),
+                                 makeParticleTrait(radius, moveRate, dx, dy));
 }
 }}}
+
+An object `m` returned by a call to `makeParticleMorph` will inherit from the "circle" object and have the following API:
+{{{
+{
+  startMoving: function() { ... this.animate() ... },
+  animate: function() { ... this.move(dx, dy) ... }
+}
+}}}
+
+Invoking `m.startMoving()` will repeatedly invoke `m.animate()`, which in turn will invoke `m.move(dx,dy)`, triggering the `move` method `m` inherits from the circle object.
 
 == Performance ==
 
