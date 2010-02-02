@@ -119,8 +119,8 @@ The second option is `open`: the value of `open` is a boolean indicating whether
   * the `this` pseudovariable in all accessors and methods of the object is bound to the composed object.
 
 `build(trait, {open: true})` indicates that the generated object is "abstract" or otherwise incomplete:
-  * no exception is thrown if 'trait' still contains [#Required_properties required properties] (the properties are simply dropped from the composite object)
-  * no exception is thrown if 'trait' still contains [#Conflicts conflicting properties] (these properties remain as conflicting properties in the composite object)
+  * Any remaining [#Required_properties required properties] are simply ignored (no exception is thrown).
+  * Any remaining [#Conflicts conflicting properties] are added to the composite (no exception is thrown by `build`, but accessing any of these properties on the composite will still throw an exception).
   * neither the object nor its accessor and method properties are frozen.
   * the `this` pseudovariable in all accessors and methods of the object is left unbound.
 
