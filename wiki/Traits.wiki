@@ -192,6 +192,8 @@ var Texclude = compose(T1, resolve({ a: undefined }, T2);
   // T2.a is excluded
 }}}
 
+The `resolve` operator is neutral with respect to required properties: aliasing or excluding a required property has no effect.
+
 Conflicts can also be resolved by means of overriding. The `override` function takes any number of traits and returns a composite trait containing all properties of its argument traits. In contrast to `compose`, the `override` function does not generate conflicts upon name clashes, but rather overrides the conflicting property with that of a trait with higher precedence. Trait precedence is from left to right, i.e. the properties of the first argument to `override` are never overridden. For example:
 
 {{{
@@ -207,11 +209,17 @@ var Toverride = override(T1, T2);
 
 `override` is obviously not commutative, but it is associative, i.e. `override(t1,t2,t3)` is equivalent to `override(t1,override(t2,t3))` or to `override(override(t1,t2),t3)`. Composition via `override` most closely resembles the kind of composition provided by single-inheritance subclassing.
 
-The `resolve` operator is neutral with respect to required properties: aliasing or excluding a required property has no effect.
-
 ==== Instantiating Traits ====
 
-The function `create` instantiates a trait into an object. It is the`traits.js` equivalent of "creating a class composed of one or more traits". The function operates analogous to the ES5 built-in function `Object.create(proto, properties)`. The call `create(proto, trait)` creates and returns a new object `o` that inherits from `proto` and that has all of the properties described by the argument trait. `create` accepts a third optional `options` argument that can be used to further describe the properties of the generated object:
+The function `create` instantiates a trait into an object. It is the`traits.js` equivalent of "creating a class composed of one or more traits". The function operates analogous to the ES5 built-in function `Object.create(proto, properties)`. The call `create(proto, trait)` creates and returns a new object `o` that inherits from `proto` and that has all of the properties described by the argument trait. For example, calling `create(Object.prototype, Toverride)` results in an object that inherits from `Object.prototype` and has a structure as if defined by:
+
+{{{
+{ a: 0,
+  b: 1,
+  c: 2 }
+}}}
+
+`create` accepts a third optional `options` argument that can be used to further describe the properties of the generated object:
 
 Currently, the only option is `open`: the value of `open` is a boolean indicating whether the instantiated object should be considered 'open' or 'closed' (the default is closed):
 
