@@ -104,7 +104,9 @@ var T = trait({
 });
 }}}
 
-In `traits.js`, required properties are defined as data properties bound to a distinguished singleton `required` object exported by the library. The trait `T` _provides_ the properties `b` and `c` and _requires_ the property `a`. The `trait` function converts the object literal into the following property descriptor map representing the trait:
+In `traits.js`, required properties are defined as data properties bound to a distinguished singleton `required` object exported by the library. `traits.js` recognizes such data properties as required properties and they are treated specially by `create` and by `compose` (see later). Traits are not required to state their required properties explicitly.
+
+The trait `T` _provides_ the properties `b` and `c` and _requires_ the property `a`. The `trait` function converts the object literal into the following property descriptor map representing the trait:
 
 {{{
 { 'a' : {
@@ -145,7 +147,8 @@ var T2 = trait({ a: 1, c: 2});
 var Tc = compose(T1,T2);
 }}}
 
-The composite trait contains all of the own properties of all of the argument traits (including non-enumerable properties). For properties that appear in multiple argument traits, a distinct "conflicting" property is defined in the composite trait (see [#Conflicts below]). In the above example, `Tc` will have the following essential structure: 
+The composite trait contains all of the own properties of all of the argument traits (including non-enumerable properties). For properties that appear in multiple argument traits, a distinct "conflicting" property is defined in the composite trait. `Tc` will have the following structure:
+
 {{{
 { 'a' : {
     get: <conflict>,
@@ -156,7 +159,11 @@ The composite trait contains all of the own properties of all of the argument tr
   'c' : { value: 2 } }
 }}}
 
-The `<conflict>` values represent accessors that, when invoked, throw an exception.
+When `compose` encounters a property name that is defined by two or more argument traits, it marks the resulting property in the composite trait as a "conflicting property" by means of the `conflict: true` atrribute (again, this is not a standard ES5 attribute). Conflicting properties are accessor properties whose `get` and `set` methods (denoted using `<conflict>` above) raise an appropriate runtime exception when invoked.
+
+Two properties `p1` and `p2` with the same name do *not* lead to a conflict if:
+  * `p1` or `p2` is a `required` property. If either `p1` or `p2` is a non-required property, the `required` property is overridden by the non-required property.
+  * `p1` and `p2` denote the "same" property. Two properties are considered to be the same if they refer to the same values. This implies that it is OK for properties to be "inherited" via multiple composition paths (cf. diamond inheritance: `T1 = compose(T2,T3)` where `T2 = compose(T4,...)` and `T3 = compose(T4, ...)`.
 
 `compose` is a commutative and associative operation: the ordering of its arguments does not matter, and `compose(t1,t2,t3)` is equivalent to, for example, `compose(t1,compose(t2,t3))` or `compose(compose(t2,t1),t3)`.
 
@@ -166,7 +173,7 @@ The `resolve` "operator" can be used to resolve conflicts created by `compose`. 
 
 {{{
 var Talias = compose(T1, resolve({ a: 'd' }, T2); 
-var Texclude = compose(t1, resolve({ a: undefined }, T2);
+var Texclude = compose(T1, resolve({ a: undefined }, T2);
 }}}
 
 `Talias` now has the following structure: 
@@ -200,6 +207,8 @@ var Toverride = override(T1, T2);
 
 `override` is obviously not commutative, but it is associative, i.e. `override(t1,t2,t3)` is equivalent to `override(t1,override(t2,t3))` or to `override(override(t1,t2),t3)`. Composition via `override` most closely resembles the kind of composition provided by single-inheritance subclassing.
 
+The `resolve` operator is neutral with respect to required properties: aliasing or excluding a required property has no effect.
+
 ==== Instantiating Traits ====
 
 The function `create` instantiates a trait into an object. It is the`traits.js` equivalent of "creating a class composed of one or more traits". The function operates analogous to the ES5 built-in function `Object.create(proto, properties)`. The call `create(proto, trait)` creates and returns a new object `o` that inherits from `proto` and that has all of the properties described by the argument trait. `create` accepts a third optional `options` argument that can be used to further describe the properties of the generated object:
@@ -207,46 +216,16 @@ The function `create` instantiates a trait into an object. It is the`traits.js` 
 Currently, the only option is `open`: the value of `open` is a boolean indicating whether the instantiated object should be considered 'open' or 'closed' (the default is closed):
 
 `create(proto, trait, { open: false })` instantiates an object that is "final" and should be complete:
-  * an exception is thrown if 'trait' still contains [#Required_properties required properties].
-  * an exception is thrown if 'trait' still contains [#Conflicts conflicting properties].
+  * an exception is thrown if 'trait' still contains `required` properties.
+  * an exception is thrown if 'trait' still contains `conflict` properties.
   * the instantiated object and all of its accessor and method properties are frozen.
   * the `this` pseudovariable in all accessors and methods of the object is bound to the instantiated object.
 
 `create(proto, trait, {open: true})` instantiates an object that is "abstract" or otherwise incomplete:
-  * Any remaining [#Required_properties required properties] are simply ignored (no exception is thrown).
-  * Any remaining [#Conflicts conflicting properties] are added to the instantiated object (no exception is thrown by `create`, but accessing any of these properties on the object will still throw an exception).
+  * Any remaining `required` properties are simply ignored (no exception is thrown).
+  * Any remaining `conflict` properties are added to the instantiated object (no exception is thrown by `create`, but accessing any of these properties on the object will still throw an exception).
   * neither the instantiated object nor its accessor and method properties are frozen.
   * the `this` pseudovariable in all accessors and methods of the instantiated object is left unbound.
-
-===== Required properties =====
-
-In `traits.js`, required properties are defined as data properties bound to a distinguished singleton `required` object exported by the library. `traits.js` recognizes such data properties as required properties and they are treated specially by `create` (cf. previous section) and by `compose` (cf. the following section). Traits are not required to state their required properties explicitly.
-
-The `create` function by default produces "complete" objects and enforces this by throwing an exception if it encounters a lingering `required` property in its argument trait. This check can be disabled by indicating to `create` that the constructed object is still "open":
-
-{{{
-var o = create(proto, trait, { open: true });
-}}}
-
-In this case, `create` silently filters out any `required` properties left in `trait`.
-
-The `resolve` operator is neutral with respect to required properties: aliasing or excluding a required property has no effect.
-
-===== Conflicts =====
-
-When `compose` encounters a property name that is defined by two or more argument traits, it marks the resulting property in the composite trait as a "conflicting property". Conflicting properties are accessor properties whose `get` and `set` methods raise an appropriate runtime exception when invoked.
-
-Two properties `p1` and `p2` with the same name do *not* lead to a conflict if:
-  * `p1` or `p2` is a [#Required_properties required] property. If either `p1` or `p2` is a non-required property, the `required` property is overridden by the non-required property.
-  * `p1` and `p2` denote the "same" property. Two properties are considered to be the same if they refer to the same values. This implies that it is OK for properties to be "inherited" via multiple composition paths (cf. diamond inheritance: `T1 = compose(T2,T3)` where `T2 = compose(T4,...)` and `T3 = compose(T4, ...)`.
-
-By default, `traits.js` does not allow conflicting properties to linger in objects produced by `create`. However, this behavior can be changed by passing the following option to `create`:
-
-{{{
-var o = create(proto, trait, { open: true });
-}}}
-
-In this case, if `trait` does contain conflicts, those conflicting properties will be present in `o` and will trigger an exception when accessed.
 
 === Stateful traits ===
 
