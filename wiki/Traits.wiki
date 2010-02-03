@@ -70,7 +70,7 @@ var r = Range(0,5);
 r.inject(0,function(a,b){return a+b;}); // 10
 }}}
 
-==== Traits vs Objects ====
+=== Traits vs Objects ===
 
 `traits.js` explicitly distinguishes traits from plain application objects since traits are not meant to be used directly by the application. Instead, traits themselves merely _describe_ object structure and should be _instantiated_ into application objects. Traits do have a runtime representation in `traits.js`: traits are represented as property descriptor maps: objects whose keys represent property names and whose values are Ecmascript 5 "property descriptors".
 
@@ -78,7 +78,7 @@ Basic traits can be created from simple object descriptions (usually Javascript 
 
 As mentioned in the background, trait composition is orthogonal to inheritance. `traits.js` does not expect traits to take part in object-inheritance (i.e. prototype delegation) and should only be composed via trait composition. Traits do not have a "prototype", but the objects they instantiate do, and these objects may take part in object-inheritance.
 
-==== Composing traits ====
+=== API ===
 
 The essential functions exported by `traits.js` are:
   * `trait({ ... }) -> trait`
@@ -90,7 +90,44 @@ The essential functions exported by `traits.js` are:
 
 All of the above functions except `trait` are pure: they never modify their argument values and they do not depend on mutable state across invocations.
 
-The function `trait` allows one to define "atomic" (non-composite) traits. It essentially turns a record of properties into a trait. The objects passed to `trait` should really only serve as plain records that describe a simple trait's properties, they typically shouldn't serve any other purpose (they shouldn't be part of an inheritance chain, for example). The `trait` function accepts an object only because we want to leverage the expressiveness of Javascript's excellent object literal syntax. The convention is to invoke `trait` only with an object literal argument.
+The function `eqv(t1,t2)` returns `true` if and only if t1 and t2 are equivalent. Two traits are equivalent if they describe the same set of property names, and the property descriptors bound to these names have identical attributes.
+
+==== Atomic Traits ====
+
+The function `trait` allows one to define "atomic" (non-composite) traits. It essentially turns a record of properties into a trait. For example:
+
+{{{
+var T = trait({
+    a: required,
+    b: function() { ... this.a() ... },
+    c: function() { ... }
+});
+}}}
+
+The trait `T` _provides_ the properties `b` and `c` and _requires_ the property `a`. The `trait` function converts the object literal into the following property descriptor map representing the trait:
+
+{{{
+{ 'a' : {
+    value: required,
+    required: true,
+    enumerable: true
+  },
+  'b' : {
+    value: function() { ... } // Note: b.prototype is frozen
+    method: true,
+    enumerable: true
+  },
+  'c' : {
+    value: function() { ... } // Note: c.prototype is frozen
+    method: true,
+    enumerable: true
+  }
+}
+}}}
+
+The attributes `required` and `method` are not standard ES5 attributes, but have a special interpretation in the `traits.js` library.
+
+The objects passed to `trait` should only serve as plain records that describe a simple trait's properties, they typically shouldn't serve any other purpose (they shouldn't be part of an inheritance chain, for example). The `trait` function accepts an object only because we want to leverage the expressiveness of Javascript's excellent object literal syntax. The convention is to invoke `trait` only with an object literal argument.
 
 The `trait` function puts the following constraints on its "object record" argument to clearly indicate that it is not meant to be applied to arbitrary objects:
   * The object record must have `Object.prototype` as its prototype. Only the object record's own properties are turned into trait properties.
@@ -98,13 +135,36 @@ The `trait` function puts the following constraints on its "object record" argum
   * Data properties in the object record bound to functions are interpreted as trait "methods". `trait` will freeze the `.prototype` property of such methods. If the trait is ever instantiated as a "closed" object using `create(proto,trait,{open:false})` (see below), the `this` binding within a method is guaranteed to refer to the instantiated composite object.
   * `trait` is pure if no other code has a reference to any of the object record's methods. If `trait` is applied to an object literal whose methods are represented as anonymous in-place functions as recommended, this should be the case.
 
-The function `compose` is the workhorse of `traits.js`. It composes zero or more traits into a single composite trait. The composite trait contains all of the own properties of all of the argument traits (including non-enumerable properties). For properties that appear in multiple argument traits, a distinct "conflicting" property is defined in the composite trait (see [#Conflicts below]). `compose` is a commutative and associative operation: the ordering of its arguments does not matter, and `compose(t1,t2,t3)` is equivalent to, for example, `compose(t1,compose(t2,t3))` or `compose(compose(t2,t1),t3)`.
+==== Composing Traits ====
+
+The function `compose` is the workhorse of `traits.js`. It composes zero or more traits into a single composite trait. For example:
+
+{{{
+var T1 = trait({ a: 0, b: 1});
+var T2 = trait({ a: 1, c: 2});
+var T = compose(T1,T2);
+}}}
+
+The composite trait contains all of the own properties of all of the argument traits (including non-enumerable properties). For properties that appear in multiple argument traits, a distinct "conflicting" property is defined in the composite trait (see [#Conflicts below]). In the above example, `T` will have the following essential structure: 
+{{{
+{ 'a' : {
+    get: <conflict>,
+    set: <conflict>,
+    conflict: true
+  },
+  'b' : { value: 1 },
+  'c' : { value: 2 }
+}}}
+
+The `<conflict>` values represent accessors that, when invoked, throw an exception.
+
+`compose` is a commutative and associative operation: the ordering of its arguments does not matter, and `compose(t1,t2,t3)` is equivalent to, for example, `compose(t1,compose(t2,t3))` or `compose(compose(t2,t1),t3)`.
+
+==== Resolving Conflicts ====
 
 The `resolve` "operator" can be used to resolve conflicts created by `compose`. The function takes as its first argument an object that can avoid conflicts either by _aliasing_ or by _excluding_ property names. The object serves as a map, mapping a property name to either a string (the alias) or to undefined (indicating that the property should be excluded).
 
 The `override` function takes any number of traits and returns a composite trait containing all properties of its argument traits. In contrast to `compose`, the `override` function does not generate conflicts upon name clashes, but rather overrides the conflicting property with that of a trait with higher precedence. Trait precedence is from left to right, i.e. the properties of the first argument to `override` are never overridden. `override` is obviously not commutative, but it is associative, i.e. `override(t1,t2,t3)` is equivalent to `override(t1,override(t2,t3))` or to `override(override(t1,t2),t3)`. Composition via `override` most closely resembles the kind of composition provided by single-inheritance subclassing.
-
-Finally, the function `eqv(t1,t2)` returns `true` if and only if t1 and t2 are equivalent. Two traits are equivalent if they describe the same set of property names, and the property descriptors bound to these names have identical attributes.
 
 ==== Instantiating Traits ====
 
@@ -124,7 +184,7 @@ Currently, the only option is `open`: the value of `open` is a boolean indicatin
   * neither the instantiated object nor its accessor and method properties are frozen.
   * the `this` pseudovariable in all accessors and methods of the instantiated object is left unbound.
 
-==== Required properties ====
+===== Required properties =====
 
 In `traits.js`, required properties are defined as data properties bound to a distinguished singleton `required` object exported by the library. `traits.js` recognizes such data properties as required properties and they are treated specially by `create` (cf. previous section) and by `compose` (cf. the following section). Traits are not required to state their required properties explicitly.
 
@@ -138,7 +198,7 @@ In this case, `create` silently filters out any `required` properties left in `t
 
 The `resolve` operator is neutral with respect to required properties: aliasing or excluding a required property has no effect.
 
-==== Conflicts ====
+===== Conflicts =====
 
 When `compose` encounters a property name that is defined by two or more argument traits, it marks the resulting property in the composite trait as a "conflicting property". Conflicting properties are accessor properties whose `get` and `set` methods raise an appropriate runtime exception when invoked.
 
@@ -154,7 +214,7 @@ var o = create(proto, trait, { open: true });
 
 In this case, if `trait` does contain conflicts, those conflicting properties will be present in `o` and will trigger an exception when accessed.
 
-==== Stateful traits ====
+=== Stateful traits ===
 
 Traits were originally defined as stateless collections of methods only. `traits.js` allows stateful traits and allows traits to describe any Javascript property, regardless of whether it contains a function and regardless of whether it is a data or accessor property. If a trait property depends on mutable state, one should always "instantiate" such traits via 'maker' functions, to prevent a stateful trait from being composed multiple times with different objects:
 
@@ -188,92 +248,11 @@ var o1 = create(Object.prototype, makeStatefulTrait(5));
 var o2 = create(Object.prototype, makeStatefulTrait(5));
 }}}
 
-== An Example ==
+== Examples ==
 
-The following [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/trait-example.js animationtrait example] is a direct translation of the same example from [[#References 2]].
+The [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/trait-example.js animationtrait example] is a direct translation of the same example from [[#References 2]], showcasing stateful traits.
 
-First, define a simple "circle" object that is parameterized with a circle radius:
-
-{{{
-function makeCircle(radius) {
-  return {
-    move: function(dx, dy) {
-      return 'moved '+dx+','+dy;
-    }
-  };
-}
-}}}
-
-This circle object will serve as the prototype of an object that we will instantiate from a trait, below. Next, we define our first trait, in this case a simple, non-composite trait that captures the trait of an object to be "animatable":
-
-{{{
-function makeAnimationTrait(refreshRate) {
-  function animateLoop(trait) {
-    setTimeout(function() {
-      trait.animate();
-      animateLoop(trait);
-    }, refreshRate)
-  };
-
-  return Trait.trait({
-    animate: Trait.required,
-    start: function() { animateLoop(this); },
-    stop: function() { print('timer reset'); }
-  });
-}
-}}}
-
-First, note that this is a stateful trait, so we make sure to wrap the trait into a 'maker' function that parameterizes the state. Second, the trait _provides_ the methods `start` and `stop` and _requires_ the method `animate`. The `trait` function converts the object literal into the following property descriptor map representing the trait:
-
-{{{
-{ 'animate' : {
-    value: Trait.required,
-    required: true,
-    enumerable: true
-  },
-  'start' : {
-    value: function() { ... } // Note: value.prototype is frozen
-    method: true,
-    enumerable: true
-  },
-  'stop' : {
-    value: function() { ... } // Note: value.prototype is frozen
-    method: true,
-    enumerable: true
-  }
-}
-}}}
-
-The attributes `required` and `method` are non-standard, but have a special interpretation in the `traits.js` library.
-Next, we will define a "particle trait", which is an "animatable" object that defines a method called `move`. We define the particle trait as a composite trait. For the sake of demonstrating conflict resolution, say we don't want particles to stop animating, and we want the "start" method to be named "startMoving" instead:
-
-{{{
-function makeParticleTrait(radius, moveRate, dx, dy) {
-   return Trait.compose(
-     Trait.trait({ animate: function() { return this.move(dx, dy); } }),
-     Trait.resolve({ start: 'startMoving', stop: undefined },
-                   makeAnimationTrait(moveRate)));
-}
-}}}
-
-Finally, let's create a concrete object from these abstractions:
-
-{{{
-function makeParticleMorph(radius, moveRate, dx, dy) {
-   return Trait.create(makeCircleTrait(radius),
-                       makeParticleTrait(radius, moveRate, dx, dy));
-}
-}}}
-
-An object `m` returned by a call to `makeParticleMorph(...)` will inherit from the "circle" object and have the following API:
-{{{
-{
-  startMoving: function() { ... this.animate() ... },
-  animate: function() { ... this.move(dx, dy) ... }
-}
-}}}
-
-Invoking `m.startMoving()` will repeatedly invoke `m.animate()`, which in turn will invoke `m.move(dx,dy)`, triggering the `move` method `m` inherits from the circle object.
+TODO: implement a small collections framework using `traits.js` similar in style to [[#References 4]].
 
 == Performance ==
 
@@ -325,6 +304,17 @@ function makeTrait(requiredFoo) {
 var t1 = makeTraitProvidingFoo();
 var t2 = makeTrait(t1.foo);
 var o = create(compose(resolve({foo: undefined},t1),t2))
+}}}
+
+Diamond compositions with state: depending on how stateful traits are defined, you can either end up with duplicated state or shared state in a composite:
+
+{{{
+function makeT4(x) {
+  return trait({ m: function() { return x; } });
+}
+function makeT2(x) { return compose(trait({...}), makeT4(x)); }
+function makeT3(x) { return compose(trait({...}), makeT4(x)); }
+var T1 = compose(makeT2(5), makeT3(5)); // T4's state is duplicated
 }}}
 
 == References ==
