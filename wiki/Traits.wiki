@@ -104,7 +104,7 @@ var T = trait({
 });
 }}}
 
-The trait `T` _provides_ the properties `b` and `c` and _requires_ the property `a`. The `trait` function converts the object literal into the following property descriptor map representing the trait:
+In `traits.js`, required properties are defined as data properties bound to a distinguished singleton `required` object exported by the library. The trait `T` _provides_ the properties `b` and `c` and _requires_ the property `a`. The `trait` function converts the object literal into the following property descriptor map representing the trait:
 
 {{{
 { 'a' : {
@@ -142,10 +142,10 @@ The function `compose` is the workhorse of `traits.js`. It composes zero or more
 {{{
 var T1 = trait({ a: 0, b: 1});
 var T2 = trait({ a: 1, c: 2});
-var T = compose(T1,T2);
+var Tc = compose(T1,T2);
 }}}
 
-The composite trait contains all of the own properties of all of the argument traits (including non-enumerable properties). For properties that appear in multiple argument traits, a distinct "conflicting" property is defined in the composite trait (see [#Conflicts below]). In the above example, `T` will have the following essential structure: 
+The composite trait contains all of the own properties of all of the argument traits (including non-enumerable properties). For properties that appear in multiple argument traits, a distinct "conflicting" property is defined in the composite trait (see [#Conflicts below]). In the above example, `Tc` will have the following essential structure: 
 {{{
 { 'a' : {
     get: <conflict>,
@@ -153,7 +153,7 @@ The composite trait contains all of the own properties of all of the argument tr
     conflict: true
   },
   'b' : { value: 1 },
-  'c' : { value: 2 }
+  'c' : { value: 2 } }
 }}}
 
 The `<conflict>` values represent accessors that, when invoked, throw an exception.
@@ -162,9 +162,43 @@ The `<conflict>` values represent accessors that, when invoked, throw an excepti
 
 ==== Resolving Conflicts ====
 
-The `resolve` "operator" can be used to resolve conflicts created by `compose`. The function takes as its first argument an object that can avoid conflicts either by _aliasing_ or by _excluding_ property names. The object serves as a map, mapping a property name to either a string (the alias) or to undefined (indicating that the property should be excluded).
+The `resolve` "operator" can be used to resolve conflicts created by `compose`. The function takes as its first argument an object that can avoid conflicts either by _aliasing_ or by _excluding_ property names. The object serves as a map, mapping a property name to either a string (the alias) or to undefined (indicating that the property should be excluded). For example, if we wanted to avoid the conflict in the `Tc` trait from the previous example, we could have composed `T1` and `T2` as follows:
 
-The `override` function takes any number of traits and returns a composite trait containing all properties of its argument traits. In contrast to `compose`, the `override` function does not generate conflicts upon name clashes, but rather overrides the conflicting property with that of a trait with higher precedence. Trait precedence is from left to right, i.e. the properties of the first argument to `override` are never overridden. `override` is obviously not commutative, but it is associative, i.e. `override(t1,t2,t3)` is equivalent to `override(t1,override(t2,t3))` or to `override(override(t1,t2),t3)`. Composition via `override` most closely resembles the kind of composition provided by single-inheritance subclassing.
+{{{
+var Talias = compose(T1, resolve({ a: 'd' }, T2); 
+var Texclude = compose(t1, resolve({ a: undefined }, T2);
+}}}
+
+`Talias` now has the following structure: 
+{{{
+{ 'a' : { value: 0 },
+  'b' : { value: 1 },
+  'c' : { value: 2 },
+  'd' : { value: 1 } } // alias for T2.a
+}}}
+
+`Texclude` has the structure:
+{{{
+{ 'a' : { value: 0 },
+  'b' : { value: 1 },
+  'c' : { value: 2 } }
+  // T2.a is excluded
+}}}
+
+Conflicts can also be resolved by means of overriding. The `override` function takes any number of traits and returns a composite trait containing all properties of its argument traits. In contrast to `compose`, the `override` function does not generate conflicts upon name clashes, but rather overrides the conflicting property with that of a trait with higher precedence. Trait precedence is from left to right, i.e. the properties of the first argument to `override` are never overridden. For example:
+
+{{{
+var Toverride = override(T1, T2);
+}}}
+
+`Toverride` is equivalent to:
+{{{
+{ 'a' : { value: 0 }, // T1.a overrides T2.a
+  'b' : { value: 1 },
+  'c' : { value: 2 } }
+}}}
+
+`override` is obviously not commutative, but it is associative, i.e. `override(t1,t2,t3)` is equivalent to `override(t1,override(t2,t3))` or to `override(override(t1,t2),t3)`. Composition via `override` most closely resembles the kind of composition provided by single-inheritance subclassing.
 
 ==== Instantiating Traits ====
 
