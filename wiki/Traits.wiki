@@ -332,3 +332,4 @@ var o = create(compose(resolve({foo: undefined},t1),t2))
   * [[1]] "Traits: Composable units of Behavior" (Scharli et. al, ECOOP 2003) ([http://scg.unibe.ch/archive/papers/Scha03aTraits.pdf paper])
   * [[2]] "Adding State and Visibility Control to Traits using Lexical Nesting" (Van Cutsem et. al, ECOOP 2009) ([http://prog.vub.ac.be/Publications/2009/vub-prog-tr-09-04.pdf paper])
   * [[3]] [http://wiki.php.net/rfc/horizontalreuse Traits for PHP]
+  * [[4]] "Applying Traits to the Smalltalk Collection Classes": describes a concrete experiment how traits were used to refactor the Smalltalk Collections hierarchy ([http://scg.unibe.ch/archive/papers/Blac03aTraitsHierarchy.pdf paper])
