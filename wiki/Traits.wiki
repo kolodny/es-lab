@@ -45,8 +45,7 @@ Name clashes that are never explicitly resolved will eventually lead to a compos
 
 Trait composition is declarative in the sense that the ordering of composed traits does not matter. In other words, unlike mixins/multiple inheritance, trait composition is commutative and associative. This tremendously reduces the cognitive burden of reasoning about deeply nested levels of trait composition. In languages that support traits as a compile-time entity (similar to classes), trait composition can be entirely performed at compile-time, effectively "flattening" the composition and eliminating any composition overhead at runtime.
 
-Since their publication in 2003, traits have received widespread adoption in the PL community, although the details of the many traits implementations differ significantly from the original implementation defined for Smalltalk. Traits have been adopted in Perl (see e.g. the [http://search.cpan.org/~ovid/Class-Trait-0.31/lib/Class/Trait.pm Class::Trait module]), Fortress, Dr. Scheme OO, Slate, ... Scala supports [http://www.scala-lang.org/node/126 "traits"], although these should have been called [http://www.scala-lang.org/node/117 mixins] (there is no explicit conflict resolution). Traits are considered for inclusion in many more languages, including PHP [[#References 3]].
-
+Since their publication in 2003, traits have received widespread adoption in the PL community, although the details of the many traits implementations differ significantly from the original implementation defined for Smalltalk. Traits have been adopted in Perl (see e.g. the [http://search.cpan.org/~ovid/Class-Trait-0.31/lib/Class/Trait.pm Class::Trait module]), Fortress, Dr. Scheme OO, Slate, ... Scala supports [http://www.scala-lang.org/node/126 "traits"], although these should have been called [http://www.scala-lang.org/node/117 mixins] (there is no explicit conflict resolution). Traits are considered for inclusion in many more languages, including [http://wiki.php.net/rfc/horizontalreuse PHP].
 = Traits for Javascript =
 
 The above `Enumerable` example can be encoded using `traits.js` as follows:
@@ -273,7 +272,7 @@ var o2 = create(Object.prototype, makeStatefulTrait(5));
 
 The [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/trait-example.js animationtrait example] is a direct translation of the same example from [[#References 2]], showcasing stateful traits.
 
-TODO: implement a small collections framework using `traits.js` similar in style to [[#References 4]].
+TODO: implement a small collections framework using `traits.js` similar in style to [[#References 3]].
 
 == Performance ==
 
@@ -342,5 +341,4 @@ var T1 = compose(makeT2(5), makeT3(5)); // T4's state is duplicated
 
   * [[1]] "Traits: Composable units of Behavior" (Scharli et al., ECOOP 2003) ([http://scg.unibe.ch/archive/papers/Scha03aTraits.pdf paper]): _the original presentation of traits, including a deep discussion on the advantages of traits over mixins and multiple inheritance._
   * [[2]] "Adding State and Visibility Control to Traits using Lexical Nesting" (Van Cutsem et. al, ECOOP 2009) ([http://prog.vub.ac.be/Publications/2009/vub-prog-tr-09-04.pdf paper]): _describes a trait system in a lexically-scoped, object-based language similar in style to Javascript._
-  * [[3]] [http://wiki.php.net/rfc/horizontalreuse Traits for PHP]
-  * [[4]] "Applying Traits to the Smalltalk Collection Classes" (Black et al., OOPSLA 2003) ([http://scg.unibe.ch/archive/papers/Blac03aTraitsHierarchy.pdf paper]): _describes a concrete experiment how traits were used to refactor the Smalltalk Collections hierarchy._
+  * [[3]] "Applying Traits to the Smalltalk Collection Classes" (Black et al., OOPSLA 2003) ([http://scg.unibe.ch/archive/papers/Blac03aTraitsHierarchy.pdf paper]): _describes a concrete experiment how traits were used to refactor the Smalltalk Collections hierarchy._
