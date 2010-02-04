@@ -277,6 +277,8 @@ var o2 = create(Object.prototype, makeStatefulTrait(5));
 
 The [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/trait-example.js animationtrait example] is a direct translation of the same example from [[#References 2]], showcasing stateful traits.
 
+The [http://code.google.com/p/es-lab/source/browse/trunk/tests/traits/traitstests.js unit tests] are a valuable resource for understanding the detailed semantics of the composition operators.
+
 TODO: implement a small collections framework using `traits.js` similar in style to [[#References 3]].
 
 == Performance ==
