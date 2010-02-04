@@ -36,10 +36,7 @@ Traits are not meant to be instantiated or used directly. They are only used to 
 
 The big difference between traits and alternative composition techniques such as multiple inheritance and mixins is that upon trait composition, name conflicts (a.k.a. name clashes) should be explicitly resolved by the composer. This is in contrast to mixins and multiple inheritance, which define all kinds of linearization schemes that impose an implicit precedence on the composed entities, with one entity overriding all of the methods of another entity. While such systems often work for well in small reuse scenarios, they are not robust: small changes in the ordering of mixins/classes somewhere high up in the inheritance/mixin chain may impact the way name clashes are resolved further down the inheritance/mixin chain. In addition, the linearization imposed by mixins/multiple inheritance precludes a composer to give precedence to both a method m1 from one mixin/class A and a method m2 from another mixin/class B: either all of A's methods take precedence over B, or all of B's methods take precedence over A.
 
-Traits allow composers to resolve name clashes by means of three "composition operators":
-  * *aliasing*: the composer may import a method under a different (non-conflicting) name.
-  * *exclusion*: the composer may explicitly exclude a method from the composition.
-  * *overriding*: the composer chooses to resolve name clashes by having all of one trait's methods take precedence over the other.
+Traits allow a composing entity to resolve name clashes in the individual components by either *excluding* a method from one of the components or by having one method explicitly *override* another one. In addition, the composer may define an *alias* for a method, allowing the composer to refer to the original method even if its original name was excluded from the composition.
 
 Name clashes that are never explicitly resolved will eventually lead to a composition error when traits are composed with a class. Depending on the language, this composition error may be a compile-time error, a runtime error when the class is composed, or a runtime error when a conflicting name is invoked on a class instance.
 
@@ -82,7 +79,7 @@ As mentioned in the background, trait composition is orthogonal to inheritance. 
 The essential functions exported by `traits.js` are:
   * `trait({ ... }) -> trait`
   * `compose(trait1, trait2, ..., traitN) -> trait`
-  * `resolve({ name: 'alias', nameToExclude: undefined, ... }, trait) -> trait`
+  * `resolve({ oldName: 'newName', nameToExclude: undefined, ... }, trait) -> trait`
   * `override(trait1, trait2, ... , traitN) -> trait`
   * `eqv(trait1, trait2) -> boolean`
   * `create(proto, trait, options) -> object`
@@ -168,19 +165,19 @@ Two properties `p1` and `p2` with the same name do *not* lead to a conflict if:
 
 ==== Resolving Conflicts ====
 
-The `resolve` "operator" can be used to resolve conflicts created by `compose`. The function takes as its first argument an object that can avoid conflicts either by _aliasing_ or by _excluding_ property names. The object serves as a map, mapping a property name to either a string (the alias) or to undefined (indicating that the property should be excluded). For example, if we wanted to avoid the conflict in the `Tc` trait from the previous example, we could have composed `T1` and `T2` as follows:
+The `resolve` "operator" can be used to resolve conflicts created by `compose`. The function takes as its first argument an object that can avoid conflicts either by _renaming_ or by _excluding_ property names. The object serves as a map, mapping a property name to either a string (indicating that the property should be renamed) or to undefined (indicating that the property should be excluded). For example, if we wanted to avoid the conflict in the `Tc` trait from the previous example, we could have composed `T1` and `T2` as follows:
 
 {{{
-var Talias = compose(T1, resolve({ a: 'd' }, T2); 
+var Trenamed = compose(T1, resolve({ a: 'd' }, T2); 
 var Texclude = compose(T1, resolve({ a: undefined }, T2);
 }}}
 
-`Talias` now has the following structure: 
+`Trenamed` now has the following structure: 
 {{{
 { 'a' : { value: 0 },
   'b' : { value: 1 },
   'c' : { value: 2 },
-  'd' : { value: 1 } } // alias for T2.a
+  'd' : { value: 1 } } // T2.a renamed to 'd'
 }}}
 
 `Texclude` has the structure:
@@ -191,7 +188,15 @@ var Texclude = compose(T1, resolve({ a: undefined }, T2);
   // T2.a is excluded
 }}}
 
-The `resolve` operator is neutral with respect to required properties: aliasing or excluding a required property has no effect.
+The `resolve` operator is neutral with respect to required properties: renaming or excluding a required property has no effect. The `resolve` operator subsumes the "alias" and "exclude" operators from the original traits model. However, whereas "alias" adds an additional name for the same method in a trait, the `resolve` operator renames the property, implicitly removing the old binding for the name. We have found this to be a more useful operator to resolve conflicts. If you really want to introduce an alias for a property, that can still be done as follows:
+
+{{{
+var Talias = compose(T1,
+            resolve({ a: 'd' }, T2),
+            trait({ a: this.d }));
+}}}
+
+In this case, `a` is renamed to `d` by `resolve` and a new property `a` is added that refers to the renamed property. The renaming performed by `resolve` is shallow: it only changes the binding of the property. If the property is a method, it will not change references to the renamed identifier within the method body.
 
 Conflicts can also be resolved by means of overriding. The `override` function takes any number of traits and returns a composite trait containing all properties of its argument traits. In contrast to `compose`, the `override` function does not generate conflicts upon name clashes, but rather overrides the conflicting property with that of a trait with higher precedence. Trait precedence is from left to right, i.e. the properties of the first argument to `override` are never overridden. For example:
 
