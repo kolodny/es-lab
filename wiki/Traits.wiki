@@ -66,9 +66,9 @@ var r = Range(0,5);
 r.inject(0,function(a,b){return a+b;}); // 10
 }}}
 
-=== Traits vs Objects ===
+=== Traits as Property Maps ===
 
-`traits.js` explicitly distinguishes traits from plain application objects since traits are not meant to be used directly by the application. Instead, traits themselves merely _describe_ object structure and should be _instantiated_ into application objects. Traits do have a runtime representation in `traits.js`: traits are represented as property descriptor maps: objects whose keys represent property names and whose values are Ecmascript 5 "property descriptors".
+`traits.js` explicitly distinguishes traits from plain application objects since traits are not meant to be used directly by the application. Instead, traits themselves merely _describe_ object structure and should be _instantiated_ into application objects. Traits do have a runtime representation in `traits.js`: traits are represented as "property descriptor maps": objects whose keys represent property names and whose values are Ecmascript 5 "property descriptors". This is the same data format as the one accepted by the standard ES5 functions `Object.create` and `Object.defineProperties`.
 
 Basic traits can be created from simple object descriptions (usually Javascript object literals) and further composed into 'composite' traits using a small set of composition functions (explained below). In order to use a (composite) trait, it must be "instantiated" into an object. When a trait is instantiated into an object `o`, the binding of the `this` pseudovariable within the trait's methods will refer to `o`. If a trait `T` defines a method `m` that requires (depends on) the method `r`, `m` should call this method using `this.r(...)`, and if that method was provided by some other trait, it will be found in the composite object `o`. The lexical scope of composed trait methods remains unaffected by trait composition.
 
