@@ -192,8 +192,8 @@ The `resolve` operator is neutral with respect to required properties: renaming 
 
 {{{
 var Talias = compose(T1,
-            resolve({ a: 'd' }, T2),
-            trait({ a: this.d }));
+  resolve({ a: 'd' }, T2),
+  trait({ a: this.d }));
 }}}
 
 In this case, `a` is renamed to `d` by `resolve` and a new property `a` is added that refers to the renamed property. The renaming performed by `resolve` is shallow: it only changes the binding of the property. If the property is a method, it will not change references to the renamed identifier within the method body.
