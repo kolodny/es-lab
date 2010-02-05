@@ -275,7 +275,7 @@ var o2 = Trait.create(Object.prototype, makeStatefulTrait(5));
 
 == Examples ==
 
-This [[http://code.google.com/p/es-lab/source/browse/trunk/src/traits/examples.js example code]] demonstrates how `traits.js` is used to build reusable "enumerable" and "comparable" abstractions as traits. It also shows how a concrete collection-like object (in this case an interval data type) can make use of such traits. For an in-depth discussion of how traits can be used to build a real Collections API, see [[#References 3]].
+This [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/examples.js example code] demonstrates how `traits.js` is used to build reusable "enumerable" and "comparable" abstractions as traits. It also shows how a concrete collection-like object (in this case an interval data type) can make use of such traits. For an in-depth discussion of how traits can be used to build a real Collections API, see [[#References 3]].
 
 The [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/trait-example.js animationtrait example] is a direct translation of the same example from [[#References 2]], showcasing stateful traits.
 
