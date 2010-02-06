@@ -337,16 +337,16 @@ var o = Trait.create(
 Diamond compositions with state: depending on how stateful traits are defined, you can either end up with duplicated state or shared state in a composite:
 
 {{{
-function makeT4(x) {
+function makeT1(x) {
   return Trait({ m: function() { return x; } });
 }
-function makeT2(x) { return Trait.compose(Trait({...}), makeT4(x)); }
-function makeT3(x) { return Trait.compose(Trait({...}), makeT4(x)); }
-var T1 = Trait.compose(makeT2(5), makeT3(5)); // T4's state is duplicated
+function makeT2(x) { return Trait.compose(Trait({...}), makeT1(x)); }
+function makeT3(x) { return Trait.compose(Trait({...}), makeT1(x)); }
+var T4 = Trait.compose(makeT2(5), makeT3(5)); // T1's state is duplicated
 }}}
 
 == References ==
 
   * [[1]] "Traits: Composable units of Behavior" (Scharli et al., ECOOP 2003) ([http://scg.unibe.ch/archive/papers/Scha03aTraits.pdf paper]): _the original presentation of traits, including a deep discussion on the advantages of traits over mixins and multiple inheritance._
   * [[2]] "Adding State and Visibility Control to Traits using Lexical Nesting" (Van Cutsem et. al, ECOOP 2009) ([http://prog.vub.ac.be/Publications/2009/vub-prog-tr-09-04.pdf paper]): _describes a trait system in a lexically-scoped, object-based language similar in style to Javascript._
-  * [[3]] "Applying Traits to the Smalltalk Collection Classes" (Black et al., OOPSLA 2003) ([http://scg.unibe.ch/archive/papers/Blac03aTraitsHierarchy.pdf paper]): _describes a concrete experiment how traits were used to refactor the Smalltalk Collections hierarchy._
+  * [[3]] "Applying Traits to the Smalltalk Collection Classes" (Black et al., OOPSLA 2003) ([http://scg.unibe.ch/archive/papers/Blac03aTraitsHierarchy.pdf paper]): _describes a concrete experiment in which traits were used to refactor the Smalltalk Collections hierarchy._
