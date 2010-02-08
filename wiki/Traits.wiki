@@ -223,19 +223,21 @@ The function `Trait.create` instantiates a trait into an object. It is the`trait
 
 `Trait.create` accepts a third optional `options` argument that can be used to further describe the properties of the generated object:
 
-Currently, the only option is `open`: the value of `open` is a boolean indicating whether the instantiated object should be considered 'open' or 'closed' (the default is closed):
+Currently, the only option accepted by `create` is `open`: the value of `open` is a boolean indicating whether the instantiated object should be considered 'open' or 'final' (the default is 'final'):
 
-`Trait.create(proto, trait, { open: false })` instantiates an object that is "final" and should be complete:
+`Trait.create(proto, trait, {open: false})` instantiates an object that is "final" and should be complete:
   * an exception is thrown if 'trait' still contains `required` properties.
   * an exception is thrown if 'trait' still contains `conflict` properties.
   * the instantiated object and all of its accessor and method properties are frozen.
   * the `this` pseudovariable in all accessors and methods of the object is bound to the instantiated object.
 
-`Trait.create(proto, trait, {open: true})` instantiates an object that is "abstract" or otherwise incomplete:
+`Trait.create(proto, trait, {open: true})` instantiates an object that is "abstract" or concrete but extensible:
   * Any remaining `required` properties are simply ignored (no exception is thrown).
   * Any remaining `conflict` properties are added to the instantiated object (no exception is thrown by `Trait.create`, but accessing any of these properties on the object will still throw an exception).
   * neither the instantiated object nor its accessor and method properties are frozen.
   * the `this` pseudovariable in all accessors and methods of the instantiated object is left unbound.
+
+Because the `this` pseudovariable in final objects is bound at instantiation time to the instantiated object, final objects don't play nice with objects that delegate to them (`this` is no longer late bound for such objects). That's why we call them final: such objects should not serve as the prototype of other objects.
 
 === Stateful traits ===
 
