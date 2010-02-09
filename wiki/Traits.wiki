@@ -242,7 +242,7 @@ Because the `this` pseudovariable in final objects is bound at instantiation tim
 
 ==== Trait object literals ====
 
-The method `Trait.object` is a convenient shorthand for writing "object literals" described by a trait. The call `Trait.object({...})` is equivalent to `Trait.create(Object.prototype, Trait({...}))`. Because the default `Trait.create` generates "final" objects, `Trait.object({...})` becomes a convenient shorthand for defining high-integrity objects: the returned object is frozen, its methods are frozen, and its `this` pseudovariable cannot be rebound by clients.
+The method `Trait.object` is a convenient shorthand for writing "object literals" described by a trait. The call `Trait.object({...})` is equivalent to the call `Trait.create(Object.prototype, Trait({...}))`. Because the default `Trait.create` generates "final" objects, `Trait.object({...})` becomes a convenient shorthand for defining "high-integrity" objects. Such objects are frozen, their methods are frozen, and their `this` pseudovariable cannot be rebound by clients.
 
 === Stateful traits ===
 
