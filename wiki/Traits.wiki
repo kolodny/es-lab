@@ -81,6 +81,7 @@ As mentioned in the background, trait composition is orthogonal to inheritance. 
   * `override(trait1, trait2, ... , traitN) -> trait`
   * `eqv(trait1, trait2) -> boolean`
   * `create(proto, trait, options) -> object`
+  * `object(record) -> object`
 
 `Trait.required` is a special singleton value that is used to denote missing required properties (see later). All of the methods defined on `Trait` are pure: they never modify their argument values and they do not depend on mutable state across invocations.
 
@@ -238,6 +239,10 @@ Currently, the only option accepted by `create` is `open`: the value of `open` i
   * the `this` pseudovariable in all accessors and methods of the instantiated object is left unbound.
 
 Because the `this` pseudovariable in final objects is bound at instantiation time to the instantiated object, final objects don't play nice with objects that delegate to them (`this` is no longer late bound for such objects). That's why we call them final: such objects should not serve as the prototype of other objects.
+
+==== Trait object literals ====
+
+The method `Trait.object` is a convenient shorthand for writing "object literals" described by a trait. The call `Trait.object({...})` is equivalent to `Trait.create(Object.prototype, Trait({...}))`. Because the default `Trait.create` generates "final" objects, `Trait.object({...})` becomes a convenient shorthand for defining high-integrity objects: the returned object is frozen, its methods are frozen, and its `this` pseudovariable cannot be rebound by clients.
 
 === Stateful traits ===
 
