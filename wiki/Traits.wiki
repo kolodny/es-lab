@@ -56,7 +56,9 @@ var EnumerableTrait = Trait({
 function Range(from, to) {
   return Trait.create(Object.prototype,
     Trait.compose(
-      Trait({ each: function(fun) { for (var i = from; i < to; i++) { return fun(i) } }),
+      Trait({
+        each: function(fun) { for (var i = from; i < to; i++) { return fun(i) }
+      }),
       EnumerableTrait));
 }
 
