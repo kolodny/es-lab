@@ -326,8 +326,9 @@ var o = Trait.create(proto, trait, { implements: [ brand1, brand2, ... ] });
 
 == Open issues ==
 
-Dealing with private methods. Composer cannot change visibility of methods. However, one can still use lexical scoping to hide required methods:
+Trait composers cannot make methods "inherited" from a trait private.
 
+Required methods of a trait must, by design, be provided by other traits as part of their public interface, and thus also become part of the public interface of instantiated objects. If a trait really requires a method that ought to be private in the final composition, it can use lexical encapsulation to hide such required methods:
 {{{
 function makeTrait(privateRequiredFoo) {
   return Trait({
@@ -341,17 +342,7 @@ var o = Trait.create(
   Trait.compose(
     Trait.resolve({foo: undefined},t1),
     t2));
-}}}
-
-Diamond compositions with state: depending on how stateful traits are defined, you can either end up with duplicated state or shared state in a composite:
-
-{{{
-function makeT1(x) {
-  return Trait({ m: function() { return x; } });
-}
-function makeT2(x) { return Trait.compose(Trait({...}), makeT1(x)); }
-function makeT3(x) { return Trait.compose(Trait({...}), makeT1(x)); }
-var T4 = Trait.compose(makeT2(5), makeT3(5)); // T1's state is duplicated
+// foo is now a private method of the composition
 }}}
 
 == References ==
