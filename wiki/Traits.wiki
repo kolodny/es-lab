@@ -162,7 +162,7 @@ Two properties `p1` and `p2` with the same name are *not* in conflict if:
   * `p1` or `p2` is a `required` property. If either `p1` or `p2` is a non-required property, the `required` property is overridden by the non-required property.
   * `p1` and `p2` denote the "same" property. Two properties are considered to be the same if they refer to the same values and have the same attributes. This implies that it is OK for properties to be "inherited" via multiple composition paths from the same trait (cf. diamond inheritance: `T1 = Trait.compose(T2,T3)` where `T2 = Trait.compose(T4,...)` and `T3 = Trait.compose(T4, ...)`.
 
-`compose` is a commutative and associative operation: the ordering of its arguments does not matter, and `Trait.compose(t1,t2,t3)` is equivalent to, for example, `Trait.compose(t1,compose(t2,t3))` or `Trait.compose(compose(t2,t1),t3)`.
+`compose` is a commutative and associative operation: the ordering of its arguments does not matter, and `compose(t1,t2,t3)` is equivalent to, for example, `compose(t1,compose(t2,t3))` or `compose(compose(t2,t1),t3)`.
 
 ==== Resolving Conflicts ====
 
@@ -212,7 +212,7 @@ var Toverride = Trait.override(T1, T2);
   'c' : { value: 2 } }
 }}}
 
-`override` is obviously not commutative, but it is associative, i.e. `Trait.override(t1,t2,t3)` is equivalent to `Trait.override(t1,override(t2,t3))` or to `Trait.override(override(t1,t2),t3)`. Composition via `override` most closely resembles the kind of composition provided by single-inheritance subclassing.
+`override` is obviously not commutative, but it is associative, i.e. `override(t1,t2,t3)` is equivalent to `override(t1,override(t2,t3))` or to `override(override(t1,t2),t3)`. Composition via `override` most closely resembles the kind of composition provided by single-inheritance subclassing.
 
 ==== Instantiating Traits ====
 
