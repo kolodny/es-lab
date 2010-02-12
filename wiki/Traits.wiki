@@ -189,7 +189,7 @@ var Texclude = Trait.compose(T1, Trait.resolve({ a: undefined }, T2);
   // T2.a is excluded
 }}}
 
-The `Trait.resolve` operator is neutral with respect to required properties: renaming or excluding a required property has no effect. `resolve` subsumes the "alias" and "exclude" operators from the original traits model. However, whereas aliasing adds an additional name for the same method in a trait, the `resolve` operator renames the property, implicitly removing the old binding for the name. We have found this to be a more useful operator to resolve conflicts. If you really want to introduce an alias for a property, that can still be done as follows:
+The `Trait.resolve` operator is neutral with respect to required properties: renaming or excluding a required property has no effect. `resolve` subsumes the "alias" and "exclude" operators from the original traits model. However, whereas aliasing adds an additional name for the same method in a trait, the `resolve` operator renames the property, implicitly removing the old binding for the name and turning it into a required property. We have found this to be a more useful operator to resolve conflicts. If you really want to introduce an alias for a property, that can still be done as follows:
 
 {{{
 var Talias = Trait.compose(T1,
