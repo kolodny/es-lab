@@ -217,8 +217,8 @@ var Toverride = Trait.override(T1, T2);
 Since traits are just property maps, they can simply be instantiated by calling the ES5 built-in function `Object.create`. Of course, this built-in function does not know about the semantics of "required" and "conflicting" properties. Required properties will be present in the instantiated object as non-enumerable data properties bound to `undefined`. Conflicting properties will be present as accessor properties that throw when accessed.
 
 The `traits.js` library additionally provides a function `Trait.create`, analogous to the built-in `Object.create`, to instantiate a trait into an object. The call `Trait.create(proto, trait)` creates and returns a new object `o` that inherits from `proto` and that has all of the properties described by the argument trait. Additionally:
-  * an exception is thrown if 'trait' still contains `required` properties.
-  * an exception is thrown if 'trait' still contains `conflict` properties.
+  * an exception is thrown if 'trait' contains `required` properties.
+  * an exception is thrown if 'trait' contains `conflict` properties.
   * the instantiated object and all of its accessor and method properties are frozen.
   * the `this` pseudovariable in all accessors and methods of the object is bound to the instantiated object.
 
