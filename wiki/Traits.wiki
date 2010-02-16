@@ -84,11 +84,11 @@ As mentioned in the background, trait composition is orthogonal to inheritance. 
   * `override(trait1, trait2, ... , traitN) -> trait`
   * `eqv(trait1, trait2) -> boolean`
   * `create(proto, trait) -> object`
-  * `object(record) -> object`
+  * `object(object-literal) -> object`
 
 `Trait.required` is a special singleton value that is used to denote missing required properties (see later). All of the methods defined on `Trait` are pure: they never modify their argument values and they do not depend on mutable state across invocations.
 
-The function `eqv(t1,t2)` returns `true` if and only if t1 and t2 are equivalent. Two traits are equivalent if they describe the same set of property names, and the property descriptors bound to these names have identical attributes.
+The function `Trait.eqv(t1,t2)` returns `true` if and only if t1 and t2 are equivalent. Two traits are equivalent if they describe the same set of property names, and the property descriptors bound to these names have identical attributes.
 
 ==== Atomic Traits ====
 
