@@ -128,7 +128,7 @@ The trait `T` _provides_ the properties `b` and `c` and _requires_ the property 
 The attributes `required` and `method` are not standard ES5 attributes, but are interpreted by the `traits.js` library.
 
 The objects passed to `Trait` should normally only serve as plain records that describe a simple trait's properties. We expect them to be used mostly in conjunction with Javascript's excellent object literal syntax. The `Trait` function turns an object into a property descriptor map with the following constraints:
-  * Only the object's own properties are turned into trait properties.
+  * Only the object's own properties are turned into trait properties (its prototype is not significant).
   * Data properties in the object record bound to the special `Trait.required` singleton are bound to a distinct "required" property descriptor (as shown above).
   * Data properties in the object record bound to functions are interpreted as "methods". Methods are distinguished from plain Javascript functions by `traits.js` in the following ways:
     * Methods are not supposed to be used as constructors. Their `.prototype` property is frozen.
