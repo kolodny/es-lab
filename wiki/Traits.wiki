@@ -300,7 +300,7 @@ Partial evaluation would enable a smart implementation to transform the composit
 {{{
 Trait({ a: 1, ... }) => literal-property-map
 Trait.compose(trait({ a: 1 }), Trait({ b: 2})) => Trait({ a:1, b:2 })
-Trait.resolve({ a: 'x' , ... } , Trait({ a: 1, b: 2, ... })) => Trait({ x: 1, b:2, ... })
+Trait.resolve({ a: 'x' , ... } , Trait({ a: 1, b: 2, ... })) => Trait({ a: Trait.required, x: 1, b:2, ... })
 Trait.resolve({ a: undefined, ... }, Trait({ a: 1, b: 2, ...})) => Trait({ b: 2, ... })
 Trait.override(Trait({a: 1, b: 2}), Trait({ a: 3, b: 4, c: 5 })) => Trait({ a: 1, b:2, c: 5})
 Trait.create(proto, literal-property-map) => native-create
