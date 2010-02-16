@@ -130,9 +130,9 @@ The attributes `required` and `method` are not standard ES5 attributes, but are 
 The objects passed to `Trait` should normally only serve as plain records that describe a simple trait's properties. We expect them to be used mostly in conjunction with Javascript's excellent object literal syntax. The `Trait` function turns an object into a property descriptor map with the following constraints:
   * Only the object's own properties are turned into trait properties (its prototype is not significant).
   * Data properties in the object record bound to the special `Trait.required` singleton are bound to a distinct "required" property descriptor (as shown above).
-  * Data properties in the object record bound to functions are interpreted as "methods". Methods are distinguished from plain Javascript functions by `traits.js` in the following ways:
-    * To avoid implicit state shared between instances via their methods' `.prototype` property, the value of this property is frozen.
-    * Methods are 'bound' to an object at instantiation time (see later). The binding of `this` in the method's body is bound to the instantiated object, ensuring that clients of that object cannot change this binding to compromise the object's integrity.
+  * Data properties in the object record bound to functions are interpreted as "methods". In order to ensure integrity, methods are distinguished from plain Javascript functions by `traits.js` in the following ways:
+    * The methods and the value of their `.prototype` property are frozen.
+    * Methods are 'bound' to an object at instantiation time (see later). The binding of `this` in the method's body is bound to the instantiated object.
   * `Trait` is a pure function if no other code has a reference to any of the object record's methods. If `Trait` is applied to an object literal whose methods are represented as anonymous in-place functions as recommended, this should be the case.
 
 ==== Composing Traits ====
