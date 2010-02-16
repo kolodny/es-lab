@@ -239,7 +239,7 @@ Use `Trait.create` to instantiate objects that should be considered "final" and 
 
 ==== Trait object literals ====
 
-The method `Trait.object` is a convenient shorthand for writing "object literals" described by a trait. The call `Trait.object({...})` is equivalent to the call `Trait.create(Object.prototype, Trait({...}))`. Since `Trait.create` generates high-integrity objects, `Trait.object({...})` can be thought of as "high-integrity-object-literal" syntax. Such objects are frozen, their methods are frozen, and their `this` pseudovariable cannot be rebound by clients.
+The method `Trait.object` is a convenient shorthand for writing "object literals" described by a trait. The call `Trait.object({...})` is equivalent to the call `Trait.create(Object.prototype, Trait({...}))`. Since `Trait.create` generates high-integrity objects, `Trait.object({...})` can be thought of as "high-integrity-object-literal" syntax. Such objects are frozen, their methods are frozen, their methods' prototypes are frozen, and their `this` pseudovariable cannot be rebound by clients.
 
 === Stateful traits ===
 
