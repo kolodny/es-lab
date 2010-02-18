@@ -91,7 +91,7 @@ As mentioned in the background, trait composition is orthogonal to inheritance. 
 The function `Trait.eqv(t1,t2)` returns `true` if and only if t1 and t2 are equivalent. Two traits are equivalent if they describe the same set of property names, and the property descriptors bound to these names have identical attributes.
 
 The following figure depicts the operations exported by the library:
-[http://es-lab.googlecode.com/svn/trunk/src/traits/Traits.png]
+<br><img alt="Traits" src="http://es-lab.googlecode.com/svn/trunk/src/traits/Traits.png" width="60%" align="center">
 
 ==== Atomic Traits ====
 
