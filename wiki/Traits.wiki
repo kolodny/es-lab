@@ -117,12 +117,12 @@ The trait `T` _provides_ the properties `b` and `c` and _requires_ the property 
     enumerable: false
   },
   'b' : {
-    value: function() { ... } // note: value.prototype is frozen
+    value: function() { ... }, // note: value.prototype is frozen
     method: true,
     enumerable: true
   },
   'c' : {
-    value: function() { ... } // note: value.prototype is frozen
+    value: function() { ... }, // note: value.prototype is frozen
     method: true,
     enumerable: true
   }
