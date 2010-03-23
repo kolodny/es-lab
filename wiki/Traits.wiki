@@ -94,9 +94,9 @@ The following figure depicts the operations exported by the library:
 <p><img alt="Traits" src="http://es-lab.googlecode.com/svn/trunk/src/traits/Traits.png" width="80%" align="center">
 <p>Both the circles and the rounded squares are Javascript objects, but they are intended to be used in very different ways.
 
-==== Atomic Traits ====
+==== Simple (non-composite) Traits ====
 
-The `Trait` function acts as a constructor for "atomic" (non-composite) traits. It essentially turns an object describing a record of properties into a trait. For example:
+The `Trait` function acts as a constructor for simple (non-composite) traits. It essentially turns an object describing a record of properties into a trait. For example:
 
 {{{
 var T = Trait({
