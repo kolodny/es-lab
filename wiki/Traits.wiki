@@ -194,7 +194,11 @@ var Texclude = Trait.compose(T1, Trait.resolve({ a: undefined }, T2);
   // T2.a is excluded
 }}}
 
-The `Trait.resolve` operator is neutral with respect to required properties: renaming or excluding a required property has no effect. `resolve` subsumes the "alias" and "exclude" operators from the original traits model. However, whereas aliasing adds an additional name for the same method in a trait, the `resolve` operator renames the property, implicitly removing the old binding for the name and turning it into a required property. We have found this to be a more useful operator to resolve conflicts. If you really want to introduce an alias for a property, that can still be done as follows:
+The `Trait.resolve` operator is neutral with respect to required properties: renaming or excluding a required property has no effect. When a property is renamed, say from `oldName` to `newName`, `oldName` is bound to `Trait.required`, to attest that the trait is not valid unless the composer provides a property for the old name. This is because the renaming performed by `resolve` is shallow: it only changes the binding of the property. If the property is a method, it will not change references to the renamed identifier within the method body. Hence, a renamed trait may internally still contain`this.oldName` self-sends.
+
+People are often uncomfortable with the fact that renaming may cause `this.oldName` in a trait method to refer to a different method in a composition. However, this type of "rebinding" is entirely equivalent to method overriding in standard inheritance.
+
+`resolve` subsumes the "alias" and "exclude" operators from the original traits model. However, whereas aliasing adds an additional name for the same method in a trait, the `resolve` operator renames the property, implicitly removing the old binding for the name and turning it into a required property. We have found this to be a more useful operator to resolve conflicts. If you really want to introduce an alias for a property, that can still be done as follows:
 
 {{{
 var Talias = Trait.compose(T1,
@@ -202,7 +206,7 @@ var Talias = Trait.compose(T1,
   Trait({ a: this.d }));
 }}}
 
-In this case, `a` is renamed to `d` by `Trait.resolve` and a new property `a` is added that refers to the renamed property. The renaming performed by `resolve` is shallow: it only changes the binding of the property. If the property is a method, it will not change references to the renamed identifier within the method body.
+In this case, `a` is renamed to `d` by `Trait.resolve` and a new property `a` is added that refers to the renamed property.
 
 Conflicts can also be resolved by means of overriding. The `Trait.override` function takes any number of traits and returns a composite trait containing all properties of its argument traits. In contrast to `compose`, `override` does not generate conflicts upon name clashes, but rather overrides the conflicting property with that of a trait with higher precedence. Trait precedence is from left to right, i.e. the properties of the first argument to `override` are never overridden. For example:
 
