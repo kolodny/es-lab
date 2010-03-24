@@ -23,7 +23,7 @@ trait Enumerable {
 }
 
 class Range(from, to) extends Object uses Enumerable {
-  function each(fun) { for (var i = from; i < to; i++) { return fun(i); } }
+  function each(fun) { for (var i = from; i < to; i++) { fun(i); } }
 }
 
 var r = new Range(0,5);
@@ -59,7 +59,7 @@ function Range(from, to) {
     Trait.compose(
       EnumerableTrait,
       Trait({
-        each: function(fun) { for (var i = from; i < to; i++) { return fun(i) }
+        each: function(fun) { for (var i = from; i < to; i++) { fun(i) }
       })));
 }
 
