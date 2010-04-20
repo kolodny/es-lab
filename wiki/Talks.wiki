@@ -1,5 +1,10 @@
 #summary Overview of tech talks related to ES-lab
 
+== Changes to JavaScript, Part 1: EcmaScript 5 ==
+
+<wiki:video url="http://www.youtube.com/watch?v=Kq4FpMe6cRs"/>
+
+[http://google-caja.googlecode.com/svn/trunk/doc/html/es5-talk/es5-talk.html TOC] | [http://google-caja.googlecode.com/svn/trunk/doc/html/es5-talk/img0.html Slides]
 
 == Changes to ECMAScript, Part 2: Harmony Highlights - proxies and traits ==
 
