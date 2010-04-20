@@ -1,6 +1,8 @@
 #summary Overview of tech talks related to ES-lab
 
-== Changes to JavaScript, Part 1: EcmaScript 5 ==
+== Changes to !JavaScript, Part 1: !EcmaScript 5 ==
+
+Speaker: Mark S. Miller (Google, Mountain View, 2009)
 
 <wiki:video url="http://www.youtube.com/watch?v=Kq4FpMe6cRs"/>
 
@@ -8,8 +10,7 @@
 
 == Changes to ECMAScript, Part 2: Harmony Highlights - proxies and traits ==
 
-Speaker: Tom Van Cutsem
-Google, Mountain View, April 20, 2010
+Speaker: Tom Van Cutsem (Google, Mountain View, April 20, 2010)
 
 === Abstract ===
 
