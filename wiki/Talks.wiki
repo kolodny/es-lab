@@ -42,6 +42,8 @@ Tom Van Cutsem is a post-doc researcher at the University of Brussels (VUB) in B
 
 == Dr. SES: Distributed Resilient Secure !EcmaScript ==
 
+Speaker: Mark S. Miller ([http://sites.google.com/site/securebydesignworkshop/capabilities-os-session Secure By Design] workshop)
+
 === Abstract ===
 
 TBD
