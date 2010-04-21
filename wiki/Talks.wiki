@@ -6,19 +6,19 @@ Speaker: Mark S. Miller (Google, Mountain View, May 2009)
 
 === Abstract ===
 
-Today's JavaScript is a decent language for writing small scale scripts. But even for beginners, it has too many minefields between what beginners learn and what they need to know. And JavaScript is now increasingly used for serious software engineering projects -- straining to carry a load it was not designed for.
+Today's !JavaScript is a decent language for writing small scale scripts. But even for beginners, it has too many minefields between what beginners learn and what they need to know. And !JavaScript is now increasingly used for serious software engineering projects -- straining to carry a load it was not designed for.
 
-After 10 years, the world of JavaScript standards is moving again. The next version, EcmaScript 5, is in "final draft standard" status with implementations about to appear. The "Harmony" agreement sets the direction for future versions beyond EcmaScript 5. The "Secure EcmaScript" working group is working towards an EcmaScript 5 subset suitable for the security needs of inline gadgets, mashups, and more.
+After 10 years, the world of !JavaScript standards is moving again. The next version, !EcmaScript 5, is in "final draft standard" status with implementations about to appear. The "Harmony" agreement sets the direction for future versions beyond !EcmaScript 5. The "Secure !EcmaScript" working group is working towards an !EcmaScript 5 subset suitable for the security needs of inline gadgets, mashups, and more.
 
-In this first talk, we'll explain changes in EcmaScript 5, the problems they're meant to address, the de-facto standards they codify, and how these changes are likely to affect web applications.
+In this first talk, we'll explain changes in !EcmaScript 5, the problems they're meant to address, the de-facto standards they codify, and how these changes are likely to affect web applications.
 
 === Bio ===
 
-Waldemar Horwat has been involved with JavaScript standardization and implementation since the 1990's when he was working on Netscape's implementation. He is a former editor of the standard and wrote parts of the existing ECMAScript Edition 3 standard. He participates in the ECMA TC39 committee and is the Google representative at the ECMA General Assembly.
+Waldemar Horwat has been involved with !JavaScript standardization and implementation since the 1990's when he was working on Netscape's implementation. He is a former editor of the standard and wrote parts of the existing ECMAScript Edition 3 standard. He participates in the ECMA TC39 committee and is the Google representative at the ECMA General Assembly.
 
-Mark S. Miller is a research scientist at Google working on Caja, a member of the EcmaScript committee, open source coordinator for the E programming language, a pioneer of agoric (market-based secure distributed) computing, and an architect of the Xanadu hypertext publishing system.
+Mark S. Miller is a research scientist at Google working on Caja, a member of the !EcmaScript committee, open source coordinator for the E programming language, a pioneer of agoric (market-based secure distributed) computing, and an architect of the Xanadu hypertext publishing system.
 
-Mike Samuel is an engineer on Caja and a member of the Secure EcmaScript working group.
+Mike Samuel is an engineer on Caja and a member of the Secure !EcmaScript working group.
 
 <wiki:video url="http://www.youtube.com/watch?v=Kq4FpMe6cRs"/>
 
@@ -39,3 +39,15 @@ The second part of the talk introduces a traits library for ECMAScript 5. Traits
 Tom Van Cutsem is a post-doc researcher at the University of Brussels (VUB) in Belgium. His research focus is on programming language design and implementation, with an emphasis on metaprogramming, concurrent and distributed programming. He is co-designer of the distributed scripting language AmbientTalk. Tom is currently on a six-month Visiting Faculty appointment at Google in MTV, cooperating with Mark Miller on Ecmascript-Harmony, the next standard edition of the Javascript programming language.
 
 [http://es-lab.googlecode.com/files/harmony_highlights_techtalk.pdf Slides]
+
+== Dr. SES: Distributed Resilient Secure !EcmaScript ==
+
+=== Abstract ===
+
+TBD
+
+=== Bio ===
+
+Mark S. Miller is a research scientist at Google working on Caja, a member of the !EcmaScript committee, open source coordinator for the E programming language, a pioneer of agoric (market-based secure distributed) computing, and an architect of the Xanadu hypertext publishing system.
+
+[http://es-lab.googlecode.com/files/dr-ses.pdf Slides]
