@@ -36,7 +36,7 @@ The second part of the talk introduces a traits library for ECMAScript 5. Traits
 
 === Bio ===
 
-Tom Van Cutsem is a post-doc researcher at the University of Brussels (VUB) in Belgium. His research focus is on programming language design and implementation, with an emphasis on metaprogramming, concurrent and distributed programming. He is co-designer of the distributed scripting language AmbientTalk. Tom is currently on a six-month Visiting Faculty appointment at Google in MTV, cooperating with Mark Miller on Ecmascript-Harmony, the next standard edition of the Javascript programming language.
+Tom Van Cutsem is a post-doc researcher at the University of Brussels (VUB) in Belgium. His research focus is on programming language design and implementation, with an emphasis on metaprogramming, concurrent and distributed programming. He is co-designer of the distributed scripting language !AmbientTalk. Tom is currently on a six-month Visiting Faculty appointment at Google in MTV, cooperating with Mark Miller on Ecmascript-Harmony, the next standard edition of the Javascript programming language.
 
 [http://es-lab.googlecode.com/files/harmony_highlights_techtalk.pdf Slides]
 
