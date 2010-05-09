@@ -43,7 +43,7 @@ All use-occurrences of variables appear as `IdExpr` nodes. All defining occurren
 The `key:value` attributes of the AST format are used by some nodes:
  
 || `type: string` || in `LiteralExpr` to denote type of literal ||
-|| `value: object`|| in `LiteralExpr` to denote value of parsed literal, in `PrologueDecl` to denote the literal string value of the directive ||
+|| `value: primitive-value`|| in `LiteralExpr` to denote value of parsed literal, in `PrologueDecl` to denote the literal string value of the directive ||
 || `name: string` || in `IdPatt`, `IdExpr`, and `*Prop` to denote the name of a variable or property||
 || `label: string` || in `ContinueStmt`, `BreakStmt` and `LabelledStmt` to denote label name ||
 || `op: string` || in `UnaryExpr`, `BinaryExpr`, `CountExpr` and `AssignExpr` to denote operator punctuator ||
