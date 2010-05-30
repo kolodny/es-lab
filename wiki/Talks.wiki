@@ -42,6 +42,16 @@ Tom Van Cutsem is a post-doc researcher at the University of Brussels (VUB) in B
 
 [http://es-lab.googlecode.com/files/harmony_highlights_techtalk.pdf Slides]
 
+== Ephemeron Tables ==
+
+Speaker: Mark S. Miller at !EcmaScript committee meeting, May 2010
+
+=== Abstract ===
+
+TBD
+
+[http://es-lab.googlecode.com/files/et.pdf Slides]
+
 == Dr. SES: Distributed Resilient Secure !EcmaScript ==
 
 Speaker: Mark S. Miller ([http://sites.google.com/site/securebydesignworkshop/capabilities-os-session Secure By Design] workshop)
