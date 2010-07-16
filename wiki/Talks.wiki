@@ -41,6 +41,7 @@ Tom Van Cutsem is a post-doc researcher at the University of Brussels (VUB) in B
 <wiki:video url="http://www.youtube.com/watch?v=A1R8KGKkDjU"/>
 
 [http://es-lab.googlecode.com/files/harmony_highlights_techtalk.pdf Slides]
+The design of the Proxy API is explained in detail in the following [http://soft.vub.ac.be/~tvcutsem/proxies/assets/proxies.pdf academic paper], to be presented at the [http://www.dynamic-languages-symposium.org/ DLS 2010].
 
 == Ephemeron Tables ==
 
