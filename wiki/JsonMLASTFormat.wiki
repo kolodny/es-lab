@@ -123,7 +123,7 @@ Arguments suffixed with `?` in the first column below may be absent in the AST.
 || `visitDeleteExpr({}, lValue)` || `delete lValue` ||
 
 || `visitProgram({}, ...parts)` || `..prologue; ..stmts` ||
-|| --> ` visitPrologueDecl({directive})` || `'directive';` ||
+|| --> ` visitPrologueDecl({value, directive})` || `'directive';` ||
 || `visitEvalExpr({}, ...argExpr)` || `eval(...args)` ||
 || `visitFunctionExpr({}, optIdPatt, paramDecl, ...parts)` || `(function optId(...params) {..prologue; ..stmts})` ||
 || `visitFunctionDecl({}, idPatt, paramDecl, ...parts)` || `function id(...params) {..prologue; ..stmts}` ||
