@@ -3,9 +3,9 @@
 = Safe Mashups =
 
 Currently, to mashup with library code provided by `https://example.org/badCode.js`, one might say `<script src="https://example.org/badCode.js">`, leaving oneself fully vulnerable to `example.org`. Instead, if 
-  * the browser supports [SecureEcmaScript SES], either directly or by running [http://code.google.com/p/es-lab/source/browse/trunk/src/ses/ these scripts] on a [SecureableES5 secureable ES5] implementation,
+  * the browser supports [SecureEcmaScript SES], either directly or by running [http://code.google.com/p/google-caja/source/browse/trunk/src/com/google/caja/ses/ these scripts] on a [SecureableES5 secureable ES5] implementation,
   * the `badCode.js` library is SES compatible, and
-  * the browser supports the [http://www.w3.org/TR/UMP/ Uniform Messaging Policy],
+  * the browser supports the [http://dev.w3.org/2006/waf/UMP/ Uniform Messaging Policy],
 
 then the library's server could serve `badCode.js` with an `Access-Control-Allow-Origin:*` header, for example, by putting
 
@@ -36,6 +36,6 @@ Then a web page could obtain and use this library by doing
 By this pattern, the badCode might still lock up your page with an infinite loop. Beyond that, its only ability to affect your world is according to the objects you make accessible to `result`. The API of good SES libraries should demand only objects that provide it least authority, enabling that library's users to understand and bound the risks involved in using that library.
 
 Of course, this applies to other forms of mashups besides libraries per se, such as gadgets, analytics, etc... In that case, if the browser further supports
-   * [http://wiki.ecmascript.org/doku.php?id=strawman:proxies Catchalls]
-   * [http://wiki.ecmascript.org/doku.php?id=strawman:weak_references EphemeronTables]
+   * [http://wiki.ecmascript.org/doku.php?id=harmony:proxies Proxies]
+   * [http://wiki.ecmascript.org/doku.php?id=harmony:weak_maps WeakMap]s
 then a gadget can be imported within a [http://code.google.com/p/es-lab/source/browse/trunk/src/membrane.js Membrane] by using, for example, the `eval1` from the [http://code.google.com/p/es-lab/ compartment pattern] instead of `eval` above. The presence of that gadget on the page can then be revoked at will, after which it will no longer even be able to occupy memory.
