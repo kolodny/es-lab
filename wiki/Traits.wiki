@@ -5,7 +5,7 @@
 
 [http://code.google.com/p/es-lab/source/browse/trunk/src/traits/traits.js traits.js] is a Javascript library for Trait composition, as originally proposed in [[#References 1]] but closer to the object-based, lexically nestable traits defined in [[#References 2]]. The library has been designed for [http://www.ecma-international.org/publications/standards/Ecma-262.htm Ecmascript 5], but should be backwards-compatible with existing Ecmascript 3 implementations.
 
-See also: *[http://www.traitsjs.org/api.html API]* | *[http://www.traitsjs.org/tutorial.html Tutorial]* | *[http://howtonode.org/traitsjs howtonode article]*
+See also: *[http://www.traitsjs.org/api.html API]* | *[http://www.traitsjs.org/tutorial.html Tutorial]* | *[http://howtonode.org/traitsjs howtonode article]* | *[http://es-lab.googlecode.com/files/traitsJS_PLASTIC2011.pdf Paper]*
 
 = Background: Traits =
 
